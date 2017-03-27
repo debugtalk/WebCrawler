@@ -97,3 +97,11 @@ Crawl several websites in BFS mode with 20 concurrent workers, and set maximum d
 ```bash
 $ webcrawler --seeds http://debugtalk.com,http://blog.debugtalk.com --crawl-mode bfs --max-depth 10 --max-concurrent-workers 20
 ```
+
+## License
+
+Open source licensed under the MIT license (see LICENSE file for details).
+
+## Supported Python Versions
+
+WebCrawler supports Python 2.7, 3.3, 3.4, 3.5, and 3.6.
