@@ -11,6 +11,12 @@ Content-Type:
         - text/css
         - application/pdf
         - application/msword
+        - application/zip
+        - text/yaml
+        - application/xml
+        - application/xhtml+xml
+        - application/x-msdownload
+        - binary/octet-stream
     dynamic:
         - text/html
 
