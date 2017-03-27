@@ -286,7 +286,7 @@ class WebCrawler(object):
                 resp = requests.get(url, **kwargs)
                 duration_time = time.time() - start_time
                 resp_md5 = helpers.get_md5(resp.content)
-                hyper_links_set = self.parse_page_links(url, resp.content)
+                hyper_links_set = self.parse_page_links(resp.url, resp.content)
                 if url not in self.web_urls_mapping:
                     self.web_urls_mapping[url] = hyper_links_set
                 status_code = str(resp.status_code)
