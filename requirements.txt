@@ -1,0 +1,6 @@
+termcolor
+PyYAML
+future
+lxml
+cssselect
+requests

@@ -10,17 +10,31 @@ A simple web crawler, mainly targets for link validation test.
 - configure hyper links regex, including match type and ignore type
 - group visited urls by HTTP status code
 - flexible configuration in YAML
-- send test result by mail
+- send test result by mail, through SMTP protocol or mailgun service
 
 ## Install
 
+`WebCrawler` can be installed as a CLI tool, or just be used as a script. You can make your preference choice.
+
+If you want to install `WebCrawler`, execute the following command, and all dependencies will be installed as well. Then you can use `webcrawler` CLI tool.
+
 ```bash
 $ python setup.py install
+$ webcrawler -h
+```
+
+If you prefer to use `WebCrawler` as a script, you should install dependencies first, then you can start `WebCrawler` through `python main.py` entrance.
+
+```bash
+$ pip install -r requirements.txt
+$ python main.py -h
 ```
 
 ## Usage
 
 ```text
+$ python main.py -h
+# same as:
 $ webcrawler -h
 usage: webcrawler [-h] [--log-level LOG_LEVEL] [--seeds SEEDS]
                   [--crawl-mode CRAWL_MODE] [--max-depth MAX_DEPTH]
