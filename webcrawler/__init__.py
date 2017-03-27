@@ -63,8 +63,8 @@ def main_crawler(args):
 
     job_url = args.job_url
     build_number = args.build_number
-    yaml_log_path = os.path.join(os.getcwd(), "logs", '{}_visited_urls.yml'.format(build_number))
-    web_crawler.save_visited_urls(yaml_log_path)
+    yaml_log_folder = os.path.join(os.getcwd(), "logs", '{}'.format(build_number))
+    web_crawler.save_logs(yaml_log_folder)
 
     jenkins_log_url = "{}/{}/console".format(job_url, build_number)
     mail_content = web_crawler.gen_mail_content(jenkins_log_url)

@@ -20,12 +20,12 @@ class UrlQueue(object):
         self._visited_urls_dict = {}
         self._unvisited_urls_queue = UniqueQueue()
 
-    def add_visited_url(self, url, md5):
+    def add_visited_url(self, url, url_test_res):
         if url == "" \
             or url is None \
             or url in self._visited_urls_dict:
             return
-        self._visited_urls_dict[url] = md5
+        self._visited_urls_dict[url] = url_test_res
 
     def add_unvisited_url(self, url):
         if url == "" \

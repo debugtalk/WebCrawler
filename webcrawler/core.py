@@ -276,7 +276,7 @@ class WebCrawler(object):
 
         exception_str = ""
         status_code = '0'
-        resp_md5 = None
+        resp_content_md5 = None
         duration_time = 0
         try:
             start_time = time.time()
@@ -294,10 +294,10 @@ class WebCrawler(object):
                 start_time = time.time()
                 resp = requests.get(url, **kwargs)
                 duration_time = time.time() - start_time
-                resp_md5 = helpers.get_md5(resp.content)
+                resp_content_md5 = helpers.get_md5(resp.content)
                 hyper_links_set = self.parse_page_links(resp.url, resp.content)
                 if url not in self.web_urls_mapping:
-                    self.web_urls_mapping[url] = hyper_links_set
+                    self.web_urls_mapping[url] = list(hyper_links_set)
                 status_code = str(resp.status_code)
                 self.url_queue.add_unvisited_urls(hyper_links_set)
                 if resp.status_code > 400:
@@ -335,7 +335,12 @@ class WebCrawler(object):
             self.bad_urls_mapping[url] = exception_str
 
         self.save_categorised_url(status_code, url)
-        self.url_queue.add_visited_url(url, resp_md5)
+        url_test_res = {
+            'status_code': status_code,
+            'duration_time': duration_time,
+            'md5': resp_content_md5
+        }
+        self.url_queue.add_visited_url(url, url_test_res)
         return hyper_links_set
 
     def get_referer_urls_set(self, url):
@@ -480,9 +485,13 @@ class WebCrawler(object):
             .format(self.url_queue.get_visited_urls_count()))
         self.print_categorised_urls(self.categorised_urls)
 
-    def save_visited_urls(self, yaml_log_path):
-        helpers.save_to_yaml(self.url_queue.get_visited_urls(), yaml_log_path)
-        color_logging("Save visited urls in YAML file: {}".format(yaml_log_path))
+    def save_logs(self, yaml_log_folder):
+        visited_urls_log_path = os.path.join(yaml_log_folder, 'visited_urls.yml')
+        helpers.save_to_yaml(self.url_queue.get_visited_urls(), visited_urls_log_path)
+        color_logging("Save visited urls in YAML file: {}".format(visited_urls_log_path))
+        urls_mapping_log_path = os.path.join(yaml_log_folder, 'urls_mapping.yml')
+        helpers.save_to_yaml(self.web_urls_mapping, urls_mapping_log_path)
+        color_logging("Save urls mapping in YAML file: {}".format(urls_mapping_log_path))
 
     def gen_mail_content(self, jenkins_log_url):
         website_urls = [website['url'] for website in self.website_list]
