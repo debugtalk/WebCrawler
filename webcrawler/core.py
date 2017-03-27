@@ -51,9 +51,19 @@ def parse_seeds(seeds):
 
 class WebCrawler(object):
 
-    def __init__(self, seeds):
+    def __init__(self, seeds, include_hosts):
         self.website_list = parse_seeds(seeds)
         self.reset_all()
+
+        self.include_hosts_set = set(include_hosts)
+        self.auth_dict = {}
+        for website in self.website_list:
+            website_url = website['url']
+            host = self.get_parsed_object_from_url(website_url).netloc
+            self.include_hosts_set.add(host)
+            if website['auth']:
+                self.auth_dict[host] = website['auth']
+
         self.load_config()
 
     def reset_all(self):
@@ -62,18 +72,12 @@ class WebCrawler(object):
         self.categorised_urls = {}
         self.web_urls_mapping = {}
         self.bad_urls_mapping = {}
-        self.internal_hosts_list = []
-        self.auth_dict = {}
         self.url_queue = UrlQueue()
         self.urlparsed_object_mapping = {}
 
         for website in self.website_list:
             website_url = website['url']
             self.url_queue.add_unvisited_urls(website_url)
-            host = self.get_parsed_object_from_url(website_url).netloc
-            self.internal_hosts_list.append(host)
-            if website['auth']:
-                self.auth_dict[host] = website['auth']
 
     def load_config(self):
         self.kwargs = {
@@ -211,7 +215,7 @@ class WebCrawler(object):
 
         if content_type in self.url_type_config['static']:
             url_type = 'static'
-        elif req_host not in self.internal_hosts_list:
+        elif req_host not in self.include_hosts_set:
             url_type = 'external'
         else:
             url_type = 'recursive'

@@ -22,6 +22,9 @@ def main():
         help="Specify crawl seed url(s), several urls can be specified with pipe; \
               if auth needed, seeds can be specified like user1:pwd1@url1|user2:pwd2@url2")
     parser.add_argument(
+        '--include-hosts', default=None,
+        help="Specify extra hosts to be crawled.")
+    parser.add_argument(
         '--crawl-mode', default='BFS', help="Specify crawl mode, BFS or DFS.")
     parser.add_argument(
         '--max-depth', default=5, type=int, help="Specify max crawl depth.")
@@ -54,7 +57,9 @@ def main():
     main_crawler(args)
 
 def main_crawler(args):
-    web_crawler = WebCrawler(args.seeds)
+
+    include_hosts = args.include_hosts.split(',') if args.include_hosts else []
+    web_crawler = WebCrawler(args.seeds, include_hosts)
     web_crawler.start(
         args.crawl_mode,
         args.max_depth,
