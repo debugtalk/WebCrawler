@@ -81,7 +81,7 @@ class WebCrawler(object):
         }
         config_file = os.path.join(os.path.dirname(__file__), 'config.yml')
         config_dict = helpers.load_yaml_file(config_file)
-        self.url_type_config = config_dict['url_type']
+        self.url_type_config = config_dict['Content-Type']
         headers = config_dict['headers']
         self.user_agent = headers['User-Agent']
         self.kwargs['timeout'] = config_dict['default_timeout']
@@ -202,13 +202,16 @@ class WebCrawler(object):
 
         return parsed_object.geturl()
 
-    def get_url_type(self, parsed_object):
-        suffix = parsed_object.path.split('/')[-1].split('.')[-1].lower()
-        if suffix in self.url_type_config['image']:
-            url_type = 'image'
-        elif suffix in self.url_type_config['resource']:
-            url_type = 'resource'
-        elif parsed_object.netloc not in self.internal_hosts_list:
+    def get_url_type(self, resp, req_host):
+        try:
+            content_type = resp.headers['Content-Type']
+        except KeyError:
+            url_type = 'IGNORE'
+            return url_type
+
+        if content_type in self.url_type_config['static']:
+            url_type = 'static'
+        elif req_host not in self.internal_hosts_list:
             url_type = 'external'
         else:
             url_type = 'recursive'
@@ -276,13 +279,19 @@ class WebCrawler(object):
         resp_md5 = None
         duration_time = 0
         try:
-            url_type = self.get_url_type(parsed_object)
             start_time = time.time()
-            if url_type == 'external' or url_type == 'image' or url_type == 'resource':
-                resp = requests.head(url, **kwargs)
+            resp = requests.head(url, **kwargs)
+            url_type = self.get_url_type(resp, url_host)
+            if url_type in ['static', 'external']:
                 duration_time = time.time() - start_time
                 status_code = str(resp.status_code)
-            elif url_type == 'recursive':
+            elif url_type == 'IGNORE':
+                duration_time = time.time() - start_time
+                status_code = str(resp.status_code)
+                retry_times = 0
+            else:
+                # recursive
+                start_time = time.time()
                 resp = requests.get(url, **kwargs)
                 duration_time = time.time() - start_time
                 resp_md5 = helpers.get_md5(resp.content)
