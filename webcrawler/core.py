@@ -342,8 +342,8 @@ class WebCrawler(object):
         """ get all referer urls of the specified url.
         """
         referer_set = set()
-        for parent_url, url_list in self.web_urls_mapping.items():
-            if url in url_list:
+        for parent_url, hyper_links_set in self.web_urls_mapping.items():
+            if url in hyper_links_set:
                 referer_set.add(parent_url)
         return referer_set
 
