@@ -29,7 +29,6 @@ setup(
         'PyYAML',
         'future',
         'lxml',
-        'cssselect',
         'requests'
     ],
     classifiers=[

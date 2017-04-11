@@ -7,7 +7,6 @@ import copy
 from collections import OrderedDict
 import requests
 import lxml.html
-from lxml.cssselect import CSSSelector
 
 try:
     # Python3
@@ -236,16 +235,11 @@ class WebCrawler(object):
         raw_links_set = set()
 
         try:
-            tree = lxml.html.fromstring(content)
+            etree = lxml.html.fromstring(content)
         except lxml.etree.ParserError:
             return raw_links_set
 
-        select_a = CSSSelector('a')
-        select_link = CSSSelector('link')
-        select_script = CSSSelector('script')
-        select_img = CSSSelector('img')
-        link_elements_list = select_a(tree) + select_link(tree) \
-            + select_script(tree) + select_img(tree)
+        link_elements_list = etree.xpath("//link|//a|//script|//img")
         for link in link_elements_list:
             url = link.get('href') or link.get('src')
             if url is None:
