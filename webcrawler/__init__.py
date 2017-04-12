@@ -1,4 +1,4 @@
-__version__ = '0.1.0'
+__version__ = '0.1.1'
 
 import os
 import sys
@@ -22,8 +22,10 @@ def main():
         help="Specify crawl seed url(s), several urls can be specified with pipe; \
               if auth needed, seeds can be specified like user1:pwd1@url1|user2:pwd2@url2")
     parser.add_argument(
-        '--include-hosts', default=None,
-        help="Specify extra hosts to be crawled.")
+        '--include-hosts', help="Specify extra hosts to be crawled.")
+    parser.add_argument(
+        '--cookies', help="Specify cookies, several cookies can be joined by '|'. \
+            e.g. 'lang:en,country:us|lang:zh,country:cn'")
     parser.add_argument(
         '--crawl-mode', default='BFS', help="Specify crawl mode, BFS or DFS.")
     parser.add_argument(
@@ -59,17 +61,28 @@ def main():
 def main_crawler(args):
 
     include_hosts = args.include_hosts.split(',') if args.include_hosts else []
-    web_crawler = WebCrawler(args.seeds, include_hosts)
-    web_crawler.start(
-        args.crawl_mode,
-        args.max_depth,
-        args.max_concurrent_workers
-    )
-
+    cookies_list = args.cookies.split('|') if args.cookies else ['']
     job_url = args.job_url
     build_number = args.build_number
     yaml_log_folder = os.path.join(os.getcwd(), "logs", '{}'.format(build_number))
-    web_crawler.save_logs(yaml_log_folder)
+
+    web_crawler = WebCrawler(args.seeds, include_hosts)
+
+    for cookies_str in cookies_list:
+        cookies_str_list = cookies_str.split(',')
+        cookies = {}
+        for cookie_str in cookies_str_list:
+            key, value = cookie_str.split(':')
+            cookies[key.strip()] = value.strip()
+
+        web_crawler.start(
+            cookies,
+            args.crawl_mode,
+            args.max_depth,
+            args.max_concurrent_workers
+        )
+        suffix = '_'.join(['_'.join([key, cookies[key]]) for key in cookies])
+        web_crawler.save_logs(yaml_log_folder, suffix)
 
     jenkins_log_url = "{}/{}/console".format(job_url, build_number)
     mail_content = web_crawler.gen_mail_content(jenkins_log_url)

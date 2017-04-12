@@ -469,14 +469,15 @@ class WebCrawler(object):
             self.get_hyper_links(url, depth)
             unvisited_urls_queue.task_done()
 
-    def start(self, crawl_mode='BFS', max_depth=10, max_concurrent_workers=20):
+    def start(self, cookies={}, crawl_mode='BFS', max_depth=10, max_concurrent_workers=20):
         """ start to run test in specified crawl_mode.
         @params
             crawl_mode = 'BFS' or 'DFS'
         """
-        info = "Start to run test in {} mode, max_depts: {}"\
-            .format(crawl_mode, max_depth)
+        info = "Start to run test in {} mode, cookies: {}, max_depts: {}"\
+            .format(crawl_mode, cookies, max_depth)
         color_logging(info)
+        self.kwargs['cookies'] = cookies
 
         if crawl_mode.upper() == 'BFS':
             self.run_bfs(max_depth, max_concurrent_workers)
@@ -487,11 +488,17 @@ class WebCrawler(object):
             .format(self.url_queue.get_visited_urls_count()))
         self.print_categorised_urls(self.categorised_urls)
 
-    def save_logs(self, yaml_log_folder):
-        visited_urls_log_path = os.path.join(yaml_log_folder, 'visited_urls.yml')
+    def save_logs(self, yaml_log_folder, suffix=''):
+        if suffix:
+            visited_urls_file = 'visited_urls_{}.yml'.format(suffix)
+            urls_mapping_file = 'urls_mapping_{}.yml'.format(suffix)
+        else:
+            visited_urls_file = 'visited_urls.yml'
+            urls_mapping_file = 'urls_mapping.yml'
+        visited_urls_log_path = os.path.join(yaml_log_folder, visited_urls_file)
         helpers.save_to_yaml(self.url_queue.get_visited_urls(), visited_urls_log_path)
         color_logging("Save visited urls in YAML file: {}".format(visited_urls_log_path))
-        urls_mapping_log_path = os.path.join(yaml_log_folder, 'urls_mapping.yml')
+        urls_mapping_log_path = os.path.join(yaml_log_folder, urls_mapping_file)
         helpers.save_to_yaml(self.web_urls_mapping, urls_mapping_log_path)
         color_logging("Save urls mapping in YAML file: {}".format(urls_mapping_log_path))
 

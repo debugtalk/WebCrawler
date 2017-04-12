@@ -7,6 +7,7 @@ A simple web crawler, mainly targets for link validation test.
 - running in BFS or DFS mode
 - specify concurrent running workers in BFS mode
 - crawl seeds can be set to more than one urls
+- support crawl with cookies
 - configure hyper links regex, including match type and ignore type
 - group visited urls by HTTP status code
 - flexible configuration in YAML
@@ -36,15 +37,16 @@ $ python main.py -h
 $ python main.py -h
 # same as:
 $ webcrawler -h
-usage: webcrawler [-h] [--log-level LOG_LEVEL] [--seeds SEEDS]
-                  [--crawl-mode CRAWL_MODE] [--max-depth MAX_DEPTH]
-                  [--max-concurrent-workers MAX_CONCURRENT_WORKERS]
-                  [--job-url JOB_URL] [--build-number BUILD_NUMBER]
-                  [--smtp-host-port SMTP_HOST_PORT] [--mailgun-id MAILGUN_ID]
-                  [--mailgun-key MAILGUN_KEY]
-                  [--email-auth-username EMAIL_AUTH_USERNAME]
-                  [--email-auth-password EMAIL_AUTH_PASSWORD]
-                  [--email-recepients EMAIL_RECEPIENTS]
+usage: main.py [-h] [--log-level LOG_LEVEL] [--seeds SEEDS]
+               [--include-hosts INCLUDE_HOSTS] [--cookies COOKIES]
+               [--crawl-mode CRAWL_MODE] [--max-depth MAX_DEPTH]
+               [--max-concurrent-workers MAX_CONCURRENT_WORKERS]
+               [--job-url JOB_URL] [--build-number BUILD_NUMBER]
+               [--smtp-host-port SMTP_HOST_PORT] [--mailgun-id MAILGUN_ID]
+               [--mailgun-key MAILGUN_KEY]
+               [--email-auth-username EMAIL_AUTH_USERNAME]
+               [--email-auth-password EMAIL_AUTH_PASSWORD]
+               [--email-recepients EMAIL_RECEPIENTS]
 
 A web crawler for testing website links validation.
 
@@ -55,6 +57,10 @@ optional arguments:
   --seeds SEEDS         Specify crawl seed url(s), several urls can be
                         specified with pipe; if auth needed, seeds can be
                         specified like user1:pwd1@url1|user2:pwd2@url2
+  --include-hosts INCLUDE_HOSTS
+                        Specify extra hosts to be crawled.
+  --cookies COOKIES     Specify cookies, several cookies can be joined by '|'.
+                        e.g. 'lang:en,country:us|lang:zh,country:cn'
   --crawl-mode CRAWL_MODE
                         Specify crawl mode, BFS or DFS.
   --max-depth MAX_DEPTH
@@ -96,6 +102,12 @@ Crawl several websites in BFS mode with 20 concurrent workers, and set maximum d
 
 ```bash
 $ webcrawler --seeds http://debugtalk.com,http://blog.debugtalk.com --crawl-mode bfs --max-depth 10 --max-concurrent-workers 20
+```
+
+Crawl with different cookies.
+
+```text
+$ python main.py --seeds http://debugtalk.com --crawl-mode BFS --max-depth 10 --max-concurrent-workers 50 --cookies 'lang:en,country:us|lang:zh,country:cn'
 ```
 
 ## License
