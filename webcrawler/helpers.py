@@ -5,6 +5,23 @@ import hashlib
 import logging
 from termcolor import colored
 
+try:
+    # Python3
+    from urllib.parse import urlparse
+except ImportError:
+    # Python2
+    from urlparse import urlparse
+
+urlparsed_object_mapping = {}
+
+def get_parsed_object_from_url(url):
+    if url in urlparsed_object_mapping:
+        return urlparsed_object_mapping[url]
+
+    parsed_object = urlparse(url)
+    urlparsed_object_mapping[url] = parsed_object
+    return parsed_object
+
 
 def color_logging(text, log_level='info', color=None):
     log_level = log_level.upper()
