@@ -323,10 +323,12 @@ class WebCrawler(object):
             color_logging("{}: {}".format(url, str(ex)), 'WARNING')
             exception_str = str(ex)
             status_code = 'ChunkedEncodingError'
+            retry_times = 0
         except requests.exceptions.InvalidURL as ex:
             color_logging("{}: {}".format(url, str(ex)), 'WARNING')
             exception_str = str(ex)
             status_code = 'InvalidURL'
+            retry_times = 0
 
         url_cookie = '{}__{}'.format(self.cookie_str, url) if self.cookie_str else url
         self._print_log(depth, url, status_code, duration_time)
