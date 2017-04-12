@@ -330,22 +330,21 @@ class WebCrawler(object):
             status_code = 'InvalidURL'
             retry_times = 0
 
-        url_cookie = '{}__{}'.format(self.cookie_str, url) if self.cookie_str else url
         self._print_log(depth, url, status_code, duration_time)
         if retry_times > 0:
             if not status_code.isdigit() or int(status_code) > 400:
                 time.sleep((4-retry_times)*2)
                 return self.get_hyper_links(url, depth, retry_times-1)
         else:
-            self.bad_urls_mapping[url_cookie] = exception_str
+            self.bad_urls_mapping[url] = exception_str
 
-        self.save_categorised_url(status_code, url_cookie)
+        self.save_categorised_url(status_code, url)
         url_test_res = {
             'status_code': status_code,
             'duration_time': duration_time,
             'md5': resp_content_md5
         }
-        self.url_queue.add_visited_url(url_cookie, url_test_res)
+        self.url_queue.add_visited_url(url, url_test_res)
         return hyper_links_set
 
     def get_referer_urls_set(self, url):
