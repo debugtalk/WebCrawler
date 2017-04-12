@@ -67,17 +67,17 @@ class WebCrawler(object):
                 self.auth_dict[host] = website['auth']
 
         self.load_config()
-
-    def reset_all(self):
-        self.current_depth = 0
         self.categorised_urls = {}
         self.web_urls_mapping = {}
         self.bad_urls_mapping = {}
 
+    def reset_all(self):
+        self.current_depth = 0
+
         for website in self.website_list:
             website_url = website['url']
             self.url_queue.remove_visited_url(website_url)
-            self.url_queue.add_unvisited_urls(website_url)
+            self.url_queue.add_unvisited_url(website_url)
 
     def load_config(self):
         self.kwargs = {
@@ -490,21 +490,7 @@ class WebCrawler(object):
         else:
             self.run_dfs(max_depth)
 
-        self.save_urls_mapping()
         color_logging('=' * 120, color='yellow')
-
-    def save_urls_mapping(self):
-        if not self.web_urls_mapping:
-            return
-
-        if self.cookie_str:
-            urls_mapping_file = 'urls_mapping_{}.yml'.format(self.cookie_str)
-        else:
-            urls_mapping_file = 'urls_mapping.yml'
-
-        urls_mapping_log_path = os.path.join(self.logs_folder, urls_mapping_file)
-        helpers.save_to_yaml(self.web_urls_mapping, urls_mapping_log_path)
-        color_logging("Save urls mapping in YAML file: {}".format(urls_mapping_log_path))
 
     def print_result(self, save_visited_urls=False):
         color_logging("Finished. The crawler has tested {} urls."\
@@ -512,6 +498,9 @@ class WebCrawler(object):
         self.print_categorised_urls(self.categorised_urls)
 
         if save_visited_urls:
+            urls_mapping_log_path = os.path.join(self.logs_folder, 'urls_mapping.yml')
+            helpers.save_to_yaml(self.web_urls_mapping, urls_mapping_log_path)
+            color_logging("Save urls mapping in YAML file: {}".format(urls_mapping_log_path))
             visited_urls_log_path = os.path.join(self.logs_folder, 'visited_urls.yml')
             helpers.save_to_yaml(self.url_queue.get_visited_urls(), visited_urls_log_path)
             color_logging("Save visited urls in YAML file: {}".format(visited_urls_log_path))

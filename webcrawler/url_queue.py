@@ -32,6 +32,8 @@ class UrlQueue(object):
 
     def remove_visited_url(self, url):
         self._visited_urls_dict.pop(url, None)
+        if url in self._unvisited_urls_queue.all_items_set:
+            self._unvisited_urls_queue.all_items_set.remove(url)
 
     def add_unvisited_url(self, url):
         if url == "" \
