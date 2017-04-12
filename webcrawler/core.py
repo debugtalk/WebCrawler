@@ -52,9 +52,11 @@ class WebCrawler(object):
 
     def __init__(self, seeds, include_hosts):
         self.website_list = parse_seeds(seeds)
-        self.reset_all()
-
         self.include_hosts_set = set(include_hosts)
+        self.urlparsed_object_mapping = {}
+        self.test_counter = 0
+        self.url_queue = UrlQueue()
+        self.cookie_str = ''
         self.auth_dict = {}
         for website in self.website_list:
             website_url = website['url']
@@ -67,12 +69,10 @@ class WebCrawler(object):
 
     def reset_all(self):
         self.current_depth = 0
-        self.test_counter = 0
         self.categorised_urls = {}
         self.web_urls_mapping = {}
         self.bad_urls_mapping = {}
-        self.url_queue = UrlQueue()
-        self.urlparsed_object_mapping = {}
+        self.url_queue.clear()
 
         for website in self.website_list:
             website_url = website['url']
@@ -260,8 +260,8 @@ class WebCrawler(object):
     def _print_log(self, depth, url, status_code, duration_time):
         self.test_counter += 1
         color_logging(
-            "test_counter: {}, depth: {}, url: {}, status_code: {}, duration_time: {}s"
-            .format(self.test_counter, depth, url, status_code, round(duration_time, 3)), 'DEBUG')
+            "test_counter: {}, depth: {}, url: {}, cookie: {}, status_code: {}, duration_time: {}s"
+            .format(self.test_counter, depth, url, self.cookie_str, status_code, round(duration_time, 3)), 'DEBUG')
 
     def get_hyper_links(self, url, depth, retry_times=3):
         hyper_links_set = set()
@@ -328,21 +328,22 @@ class WebCrawler(object):
             exception_str = str(ex)
             status_code = 'InvalidURL'
 
+        url_cookie = '{}__{}'.format(self.cookie_str, url) if self.cookie_str else url
         self._print_log(depth, url, status_code, duration_time)
         if retry_times > 0:
             if not status_code.isdigit() or int(status_code) > 400:
                 time.sleep((4-retry_times)*2)
                 return self.get_hyper_links(url, depth, retry_times-1)
         else:
-            self.bad_urls_mapping[url] = exception_str
+            self.bad_urls_mapping[url_cookie] = exception_str
 
-        self.save_categorised_url(status_code, url)
+        self.save_categorised_url(status_code, url_cookie)
         url_test_res = {
             'status_code': status_code,
             'duration_time': duration_time,
             'md5': resp_content_md5
         }
-        self.url_queue.add_visited_url(url, url_test_res)
+        self.url_queue.add_visited_url(url_cookie, url_test_res)
         return hyper_links_set
 
     def get_referer_urls_set(self, url):
@@ -474,24 +475,28 @@ class WebCrawler(object):
         @params
             crawl_mode = 'BFS' or 'DFS'
         """
-        info = "Start to run test in {} mode, cookies: {}, max_depts: {}"\
+        info = "Start to run test in {} mode, cookies: {}, max_depth: {}"\
             .format(crawl_mode, cookies, max_depth)
         color_logging(info)
+        self.reset_all()
+
         self.kwargs['cookies'] = cookies
+        self.cookie_str = '_'.join(['_'.join([key, cookies[key]]) for key in cookies])
 
         if crawl_mode.upper() == 'BFS':
             self.run_bfs(max_depth, max_concurrent_workers)
         else:
             self.run_dfs(max_depth)
 
+    def print_result(self):
         color_logging("Finished. The crawler has tested {} urls."\
             .format(self.url_queue.get_visited_urls_count()))
         self.print_categorised_urls(self.categorised_urls)
 
-    def save_logs(self, yaml_log_folder, suffix=''):
-        if suffix:
-            visited_urls_file = 'visited_urls_{}.yml'.format(suffix)
-            urls_mapping_file = 'urls_mapping_{}.yml'.format(suffix)
+    def save_logs(self, yaml_log_folder):
+        if self.cookie_str:
+            visited_urls_file = 'visited_urls_{}.yml'.format(self.cookie_str)
+            urls_mapping_file = 'urls_mapping_{}.yml'.format(self.cookie_str)
         else:
             visited_urls_file = 'visited_urls.yml'
             urls_mapping_file = 'urls_mapping.yml'
@@ -501,6 +506,7 @@ class WebCrawler(object):
         urls_mapping_log_path = os.path.join(yaml_log_folder, urls_mapping_file)
         helpers.save_to_yaml(self.web_urls_mapping, urls_mapping_log_path)
         color_logging("Save urls mapping in YAML file: {}".format(urls_mapping_log_path))
+        color_logging('=' * 120, color='yellow')
 
     def gen_mail_content(self, jenkins_log_url):
         website_urls = [website['url'] for website in self.website_list]

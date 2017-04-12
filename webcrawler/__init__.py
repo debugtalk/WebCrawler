@@ -81,9 +81,9 @@ def main_crawler(args):
             args.max_depth,
             args.max_concurrent_workers
         )
-        suffix = '_'.join(['_'.join([key, cookies[key]]) for key in cookies])
-        web_crawler.save_logs(yaml_log_folder, suffix)
+        web_crawler.save_logs(yaml_log_folder)
 
+    web_crawler.print_result()
     jenkins_log_url = "{}/{}/console".format(job_url, build_number)
     mail_content = web_crawler.gen_mail_content(jenkins_log_url)
     send_mail(args, mail_content)
