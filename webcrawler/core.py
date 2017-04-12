@@ -50,7 +50,7 @@ def parse_seeds(seeds):
 
 class WebCrawler(object):
 
-    def __init__(self, seeds, include_hosts):
+    def __init__(self, seeds, include_hosts, logs_folder):
         self.website_list = parse_seeds(seeds)
         self.include_hosts_set = set(include_hosts)
         self.urlparsed_object_mapping = {}
@@ -58,6 +58,7 @@ class WebCrawler(object):
         self.url_queue = UrlQueue()
         self.cookie_str = ''
         self.auth_dict = {}
+        self.logs_folder = logs_folder
         for website in self.website_list:
             website_url = website['url']
             host = self.get_parsed_object_from_url(website_url).netloc
@@ -489,25 +490,31 @@ class WebCrawler(object):
         else:
             self.run_dfs(max_depth)
 
-    def print_result(self):
+        self.save_urls_mapping()
+        color_logging('=' * 120, color='yellow')
+
+    def save_urls_mapping(self):
+        if not self.web_urls_mapping:
+            return
+
+        if self.cookie_str:
+            urls_mapping_file = 'urls_mapping_{}.yml'.format(self.cookie_str)
+        else:
+            urls_mapping_file = 'urls_mapping.yml'
+
+        urls_mapping_log_path = os.path.join(self.logs_folder, urls_mapping_file)
+        helpers.save_to_yaml(self.web_urls_mapping, urls_mapping_log_path)
+        color_logging("Save urls mapping in YAML file: {}".format(urls_mapping_log_path))
+
+    def print_result(self, save_visited_urls=False):
         color_logging("Finished. The crawler has tested {} urls."\
             .format(self.url_queue.get_visited_urls_count()))
         self.print_categorised_urls(self.categorised_urls)
 
-    def save_logs(self, yaml_log_folder):
-        if self.cookie_str:
-            visited_urls_file = 'visited_urls_{}.yml'.format(self.cookie_str)
-            urls_mapping_file = 'urls_mapping_{}.yml'.format(self.cookie_str)
-        else:
-            visited_urls_file = 'visited_urls.yml'
-            urls_mapping_file = 'urls_mapping.yml'
-        visited_urls_log_path = os.path.join(yaml_log_folder, visited_urls_file)
-        helpers.save_to_yaml(self.url_queue.get_visited_urls(), visited_urls_log_path)
-        color_logging("Save visited urls in YAML file: {}".format(visited_urls_log_path))
-        urls_mapping_log_path = os.path.join(yaml_log_folder, urls_mapping_file)
-        helpers.save_to_yaml(self.web_urls_mapping, urls_mapping_log_path)
-        color_logging("Save urls mapping in YAML file: {}".format(urls_mapping_log_path))
-        color_logging('=' * 120, color='yellow')
+        if save_visited_urls:
+            visited_urls_log_path = os.path.join(self.logs_folder, 'visited_urls.yml')
+            helpers.save_to_yaml(self.url_queue.get_visited_urls(), visited_urls_log_path)
+            color_logging("Save visited urls in YAML file: {}".format(visited_urls_log_path))
 
     def gen_mail_content(self, jenkins_log_url):
         website_urls = [website['url'] for website in self.website_list]
