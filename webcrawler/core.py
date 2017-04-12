@@ -77,6 +77,7 @@ class WebCrawler(object):
 
         for website in self.website_list:
             website_url = website['url']
+            self.url_queue.remove_visited_url(website_url)
             self.url_queue.add_unvisited_urls(website_url)
 
     def load_config(self):

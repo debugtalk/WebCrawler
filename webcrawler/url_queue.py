@@ -34,6 +34,9 @@ class UrlQueue(object):
             return
         self._visited_urls_dict[url] = url_test_res
 
+    def remove_visited_url(self, url):
+        self._visited_urls_dict.pop(url, None)
+
     def add_unvisited_url(self, url):
         if url == "" \
             or url is None \
