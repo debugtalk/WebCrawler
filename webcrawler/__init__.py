@@ -72,6 +72,8 @@ def main_crawler(args):
         cookies_str_list = cookies_str.split(',')
         cookies = {}
         for cookie_str in cookies_str_list:
+            if ':' not in cookie_str:
+                continue
             key, value = cookie_str.split(':')
             cookies[key.strip()] = value.strip()
 
