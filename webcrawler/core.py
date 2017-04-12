@@ -73,7 +73,6 @@ class WebCrawler(object):
         self.categorised_urls = {}
         self.web_urls_mapping = {}
         self.bad_urls_mapping = {}
-        self.url_queue.clear()
 
         for website in self.website_list:
             website_url = website['url']

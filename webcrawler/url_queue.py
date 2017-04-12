@@ -23,10 +23,6 @@ class UrlQueue(object):
         self._visited_urls_dict = {}
         self._unvisited_urls_queue = UniqueQueue()
 
-    def clear(self):
-        with self._unvisited_urls_queue.mutex:
-            self._unvisited_urls_queue.clear()
-
     def add_visited_url(self, url, url_test_res):
         if url == "" \
             or url is None \
