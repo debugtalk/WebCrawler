@@ -147,7 +147,7 @@ class WebCrawler(object):
             return self.user_agent['www']
 
     def parse_url(self, url, referer_url):
-        url = url.replace(' ', '')
+        url = url.strip()
         if url == "":
             return None
 
