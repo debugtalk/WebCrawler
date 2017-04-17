@@ -177,11 +177,6 @@ class WebCrawler(object):
             # data:image/png;base64,iVBORw
             return None
 
-        if '@!' in url:
-            # https://skypixel.aliyuncs.com/uploads/f23113e01.jpeg@!1200
-            # remove picture size in url
-            url = re.sub(r"@!.*$", "", url)
-
         parsed_object = helpers.get_parsed_object_from_url(url)
 
         # remove url fragment
