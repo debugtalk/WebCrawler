@@ -50,6 +50,10 @@ def main():
     parser.add_argument(
         '--email-recepients', help="Specify email recepients.")
 
+    parser.add_argument('--save-results', dest='save_results', action='store_true')
+    parser.add_argument('--not-save-results', dest='save_results', action='store_false')
+    parser.set_defaults(save_results=False)
+
     args = parser.parse_args()
 
     log_level = getattr(logging, args.log_level.upper())
@@ -84,7 +88,7 @@ def main_crawler(args):
             args.max_concurrent_workers
         )
 
-    web_crawler.print_result(save_visited_urls=True)
+    web_crawler.print_result(save_visited_urls=args.save_results)
     jenkins_log_url = "{}/{}/console".format(job_url, build_number)
     mail_content = web_crawler.gen_mail_content(jenkins_log_url)
     send_mail(args, mail_content)
