@@ -265,6 +265,9 @@ class WebCrawler(object):
             resp = requests.head(url, **kwargs)
             url_type = self.get_url_type(resp, url_host)
             if url_type in ['static', 'external']:
+                if resp.status_code in [301, 302]:
+                    start_time = time.time()
+                    resp = requests.get(url, **kwargs)
                 duration_time = time.time() - start_time
                 status_code = str(resp.status_code)
             elif url_type == 'IGNORE':
