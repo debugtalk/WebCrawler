@@ -35,6 +35,9 @@ class UrlQueue(object):
         if url in self._unvisited_urls_queue.all_items_set:
             self._unvisited_urls_queue.all_items_set.remove(url)
 
+    def clear_unvisited_urls(self):
+        self._unvisited_urls_queue.clear()
+
     def add_unvisited_url(self, url):
         if url == "" \
             or url is None \
@@ -50,10 +53,10 @@ class UrlQueue(object):
                 self.add_unvisited_url(url)
 
     def get_one_unvisited_url(self):
-        try:
-            return self._unvisited_urls_queue.get_nowait()
-        except queue.Empty:
-            return None
+        return self._unvisited_urls_queue.get()
+
+    def get_all_unvisited_urls(self):
+        return self._unvisited_urls_queue.all_items_set
 
     def get_visited_urls_count(self):
         return len(self._visited_urls_dict)

@@ -7,6 +7,7 @@ import copy
 from collections import OrderedDict
 import requests
 import lxml.html
+import multiprocessing
 
 from .helpers import color_logging
 from .url_queue import UrlQueue
@@ -119,9 +120,12 @@ class WebCrawler(object):
         self.categorised_urls = {}
         self.web_urls_mapping = {}
         self.bad_urls_mapping = {}
+        self.current_depth_unvisited_urls_queue = queue.Queue()
 
     def reset_all(self):
         self.current_depth = 0
+        self.current_depth_unvisited_urls_queue.queue.clear()
+        self.url_queue.clear_unvisited_urls()
 
         for website in self.website_list:
             website_url = website['url']
@@ -403,69 +407,51 @@ class WebCrawler(object):
             url = self.url_queue.get_one_unvisited_url()
             crawler(url, self.current_depth)
 
-    def run_bfs(self, max_depth, max_concurrent_workers):
+    def run_bfs(self, max_depth):
         """ start to run test in BFS mode.
         """
         while self.current_depth <= max_depth:
-            self.concurrent_visit_all_unvisited_urls(max_concurrent_workers)
+            all_unvisited_urls = self.url_queue.get_all_unvisited_urls()
+            for url in all_unvisited_urls:
+                self.current_depth_unvisited_urls_queue.put_nowait(url)
+
+            self.current_depth_unvisited_urls_queue.join()
             self.current_depth += 1
 
-    def concurrent_visit_all_unvisited_urls(self, max_concurrent_workers):
-
-        current_depth_unvisited_urls_queue = queue.Queue()
-
-        while True:
-            url = self.url_queue.get_one_unvisited_url()
-            if url is None:
-                break
-            current_depth_unvisited_urls_queue.put_nowait(url)
-
-        q_size = current_depth_unvisited_urls_queue.qsize()
-        if q_size < max_concurrent_workers:
-            worker_threads_num = q_size
-        else:
-            worker_threads_num = max_concurrent_workers
-
-        threads = []
-        for _ in range(worker_threads_num):
-            thread = threading.Thread(
-                target=self.visit_url,
-                args=(current_depth_unvisited_urls_queue, self.current_depth,)
-            )
-            thread.daemon = False
-            thread.start()
-            threads.append(thread)
-
-        current_depth_unvisited_urls_queue.join()
-
-        for thread in threads:
-            thread.join()
-
-    def visit_url(self, unvisited_urls_queue, depth):
+    def visit_url(self):
         while True:
             try:
-                url = unvisited_urls_queue.get(block=True, timeout=5)
-            except queue.Empty:
-                break
+                url = self.current_depth_unvisited_urls_queue.get()
+                self.get_hyper_links(url, self.current_depth)
+            finally:
+                self.current_depth_unvisited_urls_queue.task_done()
 
-            self.get_hyper_links(url, depth)
-            unvisited_urls_queue.task_done()
+    def create_threads(self, concurrency):
+        for _ in range(concurrency):
+            thread = threading.Thread(
+                target=self.visit_url,
+                args=()
+            )
+            thread.daemon = True
+            thread.start()
 
-    def start(self, cookies={}, crawl_mode='BFS', max_depth=10, max_concurrent_workers=20):
+    def start(self, cookies={}, crawl_mode='BFS', max_depth=10, concurrency=None):
         """ start to run test in specified crawl_mode.
         @params
             crawl_mode = 'BFS' or 'DFS'
         """
-        info = "Start to run test in {} mode, cookies: {}, max_depth: {}"\
-            .format(crawl_mode, cookies, max_depth)
+        concurrency = int(concurrency or multiprocessing.cpu_count() * 4)
+        info = "Start to run test in {} mode, cookies: {}, max_depth: {}, concurrency: {}"\
+            .format(crawl_mode, cookies, max_depth, concurrency)
         color_logging(info)
         self.reset_all()
+        self.create_threads(concurrency)
 
         self.kwargs['cookies'] = cookies
         self.cookie_str = '_'.join(['_'.join([key, cookies[key]]) for key in cookies])
 
         if crawl_mode.upper() == 'BFS':
-            self.run_bfs(max_depth, max_concurrent_workers)
+            self.run_bfs(max_depth)
         else:
             self.run_dfs(max_depth)
 

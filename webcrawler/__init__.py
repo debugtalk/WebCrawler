@@ -1,4 +1,4 @@
-__version__ = '0.1.1'
+__version__ = '0.1.2'
 
 import os
 import sys
@@ -31,8 +31,7 @@ def main():
     parser.add_argument(
         '--max-depth', default=5, type=int, help="Specify max crawl depth.")
     parser.add_argument(
-        '--max-concurrent-workers', default=20, type=int,
-        help="Specify max concurrent workers number.")
+        '--concurrency', help="Specify concurrent workers number.")
     parser.add_argument(
         '--job-url', default='0', help="Specify jenkins job url.")
     parser.add_argument(
@@ -85,7 +84,7 @@ def main_crawler(args):
             cookies,
             args.crawl_mode,
             args.max_depth,
-            args.max_concurrent_workers
+            args.concurrency
         )
 
     web_crawler.print_result(save_visited_urls=args.save_results)

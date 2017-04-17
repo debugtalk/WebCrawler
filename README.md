@@ -40,13 +40,13 @@ $ webcrawler -h
 usage: main.py [-h] [--log-level LOG_LEVEL] [--seeds SEEDS]
                [--include-hosts INCLUDE_HOSTS] [--cookies COOKIES]
                [--crawl-mode CRAWL_MODE] [--max-depth MAX_DEPTH]
-               [--max-concurrent-workers MAX_CONCURRENT_WORKERS]
-               [--job-url JOB_URL] [--build-number BUILD_NUMBER]
-               [--smtp-host-port SMTP_HOST_PORT] [--mailgun-id MAILGUN_ID]
-               [--mailgun-key MAILGUN_KEY]
+               [--concurrency CONCURRENCY] [--job-url JOB_URL]
+               [--build-number BUILD_NUMBER] [--smtp-host-port SMTP_HOST_PORT]
+               [--mailgun-id MAILGUN_ID] [--mailgun-key MAILGUN_KEY]
                [--email-auth-username EMAIL_AUTH_USERNAME]
                [--email-auth-password EMAIL_AUTH_PASSWORD]
-               [--email-recepients EMAIL_RECEPIENTS]
+               [--email-recepients EMAIL_RECEPIENTS] [--save-results]
+               [--not-save-results]
 
 A web crawler for testing website links validation.
 
@@ -65,8 +65,8 @@ optional arguments:
                         Specify crawl mode, BFS or DFS.
   --max-depth MAX_DEPTH
                         Specify max crawl depth.
-  --max-concurrent-workers MAX_CONCURRENT_WORKERS
-                        Specify max concurrent workers number.
+  --concurrency CONCURRENCY
+                        Specify concurrent workers number.
   --job-url JOB_URL     Specify jenkins job url.
   --build-number BUILD_NUMBER
                         Specify jenkins build number.
@@ -82,6 +82,8 @@ optional arguments:
                         Specify email SMTP auth account.
   --email-recepients EMAIL_RECEPIENTS
                         Specify email recepients.
+  --save-results
+  --not-save-results
 ```
 
 ## Examples
@@ -89,7 +91,7 @@ optional arguments:
 Crawl in BFS mode with 20 concurrent workers, and set maximum depth to 5.
 
 ```bash
-$ webcrawler --seeds http://debugtalk.com --crawl-mode bfs --max-depth 5 --max-concurrent-workers 20
+$ webcrawler --seeds http://debugtalk.com --crawl-mode bfs --max-depth 5 --concurrency 20
 ```
 
 Crawl in DFS mode, and set maximum depth to 10.
@@ -101,13 +103,13 @@ $ webcrawler --seeds http://debugtalk.com --crawl-mode dfs --max-depth 10
 Crawl several websites in BFS mode with 20 concurrent workers, and set maximum depth to 10.
 
 ```bash
-$ webcrawler --seeds http://debugtalk.com,http://blog.debugtalk.com --crawl-mode bfs --max-depth 10 --max-concurrent-workers 20
+$ webcrawler --seeds http://debugtalk.com,http://blog.debugtalk.com --crawl-mode bfs --max-depth 10 --concurrency 20
 ```
 
 Crawl with different cookies.
 
 ```text
-$ python main.py --seeds http://debugtalk.com --crawl-mode BFS --max-depth 10 --max-concurrent-workers 50 --cookies 'lang:en,country:us|lang:zh,country:cn'
+$ python main.py --seeds http://debugtalk.com --crawl-mode BFS --max-depth 10 --concurrency 50 --cookies 'lang:en,country:us|lang:zh,country:cn'
 ```
 
 ## License
