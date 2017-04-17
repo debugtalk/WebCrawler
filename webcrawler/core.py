@@ -457,9 +457,10 @@ class WebCrawler(object):
 
         color_logging('=' * 120, color='yellow')
 
-    def print_result(self, save_visited_urls=False):
-        color_logging("Finished. The crawler has tested {} urls."\
-            .format(self.url_queue.get_visited_urls_count()))
+    def print_result(self, canceled=False, save_visited_urls=False):
+        status = "Canceled" if canceled else "Finished"
+        color_logging("{}. The crawler has tested {} urls."\
+            .format(status, self.url_queue.get_visited_urls_count()))
         self.print_categorised_urls(self.categorised_urls)
 
         if save_visited_urls:

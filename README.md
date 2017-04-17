@@ -12,6 +12,7 @@ A simple web crawler, mainly targets for link validation test.
 - group visited urls by HTTP status code
 - flexible configuration in YAML
 - send test result by mail, through SMTP protocol or mailgun service
+- cancel jobs
 
 ## Install
 

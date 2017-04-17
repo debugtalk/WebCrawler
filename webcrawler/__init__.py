@@ -71,23 +71,28 @@ def main_crawler(args):
 
     web_crawler = WebCrawler(args.seeds, include_hosts, logs_folder)
 
-    for cookies_str in cookies_list:
-        cookies_str_list = cookies_str.split(',')
-        cookies = {}
-        for cookie_str in cookies_str_list:
-            if ':' not in cookie_str:
-                continue
-            key, value = cookie_str.split(':')
-            cookies[key.strip()] = value.strip()
+    canceled = False
+    try:
+        for cookies_str in cookies_list:
+            cookies_str_list = cookies_str.split(',')
+            cookies = {}
+            for cookie_str in cookies_str_list:
+                if ':' not in cookie_str:
+                    continue
+                key, value = cookie_str.split(':')
+                cookies[key.strip()] = value.strip()
 
-        web_crawler.start(
-            cookies,
-            args.crawl_mode,
-            args.max_depth,
-            args.concurrency
-        )
-
-    web_crawler.print_result(save_visited_urls=args.save_results)
-    jenkins_log_url = "{}/{}/console".format(job_url, build_number)
-    mail_content = web_crawler.gen_mail_content(jenkins_log_url)
-    send_mail(args, mail_content)
+            web_crawler.start(
+                cookies,
+                args.crawl_mode,
+                args.max_depth,
+                args.concurrency
+            )
+    except KeyboardInterrupt:
+        canceled = True
+        color_logging("Canceling...", color='red')
+    finally:
+        web_crawler.print_result(canceled, save_visited_urls=args.save_results)
+        jenkins_log_url = "{}/{}/console".format(job_url, build_number)
+        mail_content = web_crawler.gen_mail_content(jenkins_log_url)
+        send_mail(args, mail_content)
