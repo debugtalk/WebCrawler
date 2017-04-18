@@ -414,8 +414,8 @@ class WebCrawler(object):
         """ start to run test in BFS mode.
         """
         while self.current_depth <= max_depth:
-            all_unvisited_urls = self.url_queue.get_all_unvisited_urls()
-            for url in all_unvisited_urls:
+            while not self.url_queue.is_unvisited_urls_empty():
+                url = self.url_queue.get_one_unvisited_url()
                 self.current_depth_unvisited_urls_queue.put_nowait(url)
 
             self.current_depth_unvisited_urls_queue.join()

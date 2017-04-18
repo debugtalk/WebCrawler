@@ -55,9 +55,6 @@ class UrlQueue(object):
     def get_one_unvisited_url(self):
         return self._unvisited_urls_queue.get()
 
-    def get_all_unvisited_urls(self):
-        return self._unvisited_urls_queue.all_items_set
-
     def get_visited_urls_count(self):
         return len(self._visited_urls_dict)
 
@@ -71,4 +68,4 @@ class UrlQueue(object):
         return url in self._visited_urls_dict
 
     def is_unvisited_urls_empty(self):
-        return self._unvisited_urls_queue.qsize() == 0
+        return self._unvisited_urls_queue.empty()
