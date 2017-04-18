@@ -343,7 +343,12 @@ class WebCrawler(object):
                 referer_set.add(parent_url)
         return referer_set
 
-    def print_categorised_urls(self, categorised_urls):
+    def get_sorted_categorised_urls(self):
+        return OrderedDict(
+            sorted(self.categorised_urls.items(), reverse=True)
+        ).items()
+
+    def print_categorised_urls(self):
 
         def _print(status_code, urls_list, log_level, show_referer=False):
             if isinstance(status_code, str):
@@ -370,11 +375,7 @@ class WebCrawler(object):
 
             color_logging(output, log_level)
 
-        self.categorised_urls_sorted_items = OrderedDict(
-            sorted(categorised_urls.items(), reverse=True)
-        ).items()
-
-        for status_code, urls_list in self.categorised_urls_sorted_items:
+        for status_code, urls_list in self.get_sorted_categorised_urls():
             color_logging('-' * 120)
             if status_code.isdigit():
                 status_code = int(status_code)
@@ -464,7 +465,7 @@ class WebCrawler(object):
         status = "Canceled" if canceled else "Finished"
         color_logging("{}. The crawler has tested {} urls."\
             .format(status, self.url_queue.get_visited_urls_count()))
-        self.print_categorised_urls(self.categorised_urls)
+        self.print_categorised_urls()
 
         if save_visited_urls:
             urls_mapping_log_path = os.path.join(self.logs_folder, 'urls_mapping.yml')
@@ -480,7 +481,7 @@ class WebCrawler(object):
         content += "Total tested urls number: {}<br/><br/>"\
             .format(self.url_queue.get_visited_urls_count())
         content += "Categorised urls number by HTTP Status Code: <br/>"
-        for status_code, urls_list in self.categorised_urls_sorted_items:
+        for status_code, urls_list in self.get_sorted_categorised_urls():
             if status_code.isdigit():
                 content += "status code {}: {}".format(status_code, len(urls_list))
             else:

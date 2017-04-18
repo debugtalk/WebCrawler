@@ -88,11 +88,12 @@ def main_crawler(args):
                 args.max_depth,
                 args.concurrency
             )
+
+        jenkins_log_url = "{}/{}/console".format(job_url, build_number)
+        mail_content = web_crawler.gen_mail_content(jenkins_log_url)
+        send_mail(args, mail_content)
     except KeyboardInterrupt:
         canceled = True
         color_logging("Canceling...", color='red')
     finally:
         web_crawler.print_result(canceled, save_visited_urls=args.save_results)
-        jenkins_log_url = "{}/{}/console".format(job_url, build_number)
-        mail_content = web_crawler.gen_mail_content(jenkins_log_url)
-        send_mail(args, mail_content)
