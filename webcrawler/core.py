@@ -134,7 +134,8 @@ class WebCrawler(object):
 
     def load_config(self):
         self.kwargs = {
-            'headers': {}
+            'headers': {},
+            'cookies': {}
         }
         config_file = os.path.join(os.path.dirname(__file__), 'config.yml')
         config_dict = helpers.load_yaml_file(config_file)
@@ -142,6 +143,14 @@ class WebCrawler(object):
         headers = config_dict['headers']
         self.user_agent = headers['User-Agent']
         self.kwargs['timeout'] = config_dict['default_timeout']
+        self.grey_env = False
+
+    def set_grey_env(self, user_agent, traceid, view_grey):
+        self.kwargs['headers']['User-Agent'] = user_agent
+        self.kwargs['cookies']['traceid'] = traceid
+        self.kwargs['cookies']['view_grey'] = view_grey
+        self.grey_env = True
+        self.grey_user_agent = user_agent
 
     def get_user_agent_by_url(self, url):
         if '//m.' in url:
@@ -250,7 +259,8 @@ class WebCrawler(object):
     def get_hyper_links(self, url, depth, retry_times=3):
         hyper_links_set = set()
         kwargs = copy.deepcopy(self.kwargs)
-        kwargs['headers']['User-Agent'] = self.get_user_agent_by_url(url)
+        if not self.grey_env:
+            kwargs['headers']['User-Agent'] = self.get_user_agent_by_url(url)
         parsed_object = helpers.get_parsed_object_from_url(url)
         url_host = parsed_object.netloc
         if url_host in self.auth_dict and self.auth_dict[url_host]:
@@ -451,7 +461,7 @@ class WebCrawler(object):
         self.reset_all()
         self.create_threads(concurrency)
 
-        self.kwargs['cookies'] = cookies
+        self.kwargs['cookies'].update(cookies)
         self.cookie_str = '_'.join(['_'.join([key, cookies[key]]) for key in cookies])
 
         if crawl_mode.upper() == 'BFS':

@@ -53,6 +53,13 @@ def main():
     parser.add_argument('--not-save-results', dest='save_results', action='store_false')
     parser.set_defaults(save_results=False)
 
+    parser.add_argument("--grey-user-agent",
+                        help="Specify grey environment header User-Agent.")
+    parser.add_argument("--grey-traceid",
+                        help="Specify grey environment cookie traceid.")
+    parser.add_argument("--grey-view-grey",
+                        help="Specify grey environment cookie view_gray.")
+
     args = parser.parse_args()
 
     log_level = getattr(logging, args.log_level.upper())
@@ -70,6 +77,10 @@ def main_crawler(args):
     logs_folder = os.path.join(os.getcwd(), "logs", '{}'.format(build_number))
 
     web_crawler = WebCrawler(args.seeds, include_hosts, logs_folder)
+
+    # set grey environment
+    if args.grey_user_agent and args.grey_traceid and args.grey_view_grey:
+        web_crawler.set_grey_env(args.grey_user_agent, args.grey_traceid, args.grey_view_grey)
 
     canceled = False
     try:
