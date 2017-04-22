@@ -143,6 +143,7 @@ class WebCrawler(object):
         headers = config_dict['headers']
         self.user_agent = headers['User-Agent']
         self.kwargs['timeout'] = config_dict['default_timeout']
+        self.white_list = config_dict['white-list']
         self.grey_env = False
 
     def set_grey_env(self, user_agent, traceid, view_grey):
@@ -263,6 +264,8 @@ class WebCrawler(object):
             kwargs['headers']['User-Agent'] = self.get_user_agent_by_url(url)
         parsed_object = helpers.get_parsed_object_from_url(url)
         url_host = parsed_object.netloc
+        if url_host in self.white_list:
+            return hyper_links_set
         if url_host in self.auth_dict and self.auth_dict[url_host]:
             kwargs['auth'] = self.auth_dict[url_host]
 
