@@ -329,6 +329,11 @@ class WebCrawler(object):
             exception_str = str(ex)
             status_code = 'InvalidURL'
             retry_times = 0
+        except lxml.etree.XMLSyntaxError as ex:
+            color_logging("{}: {}".format(url, str(ex)), 'WARNING')
+            exception_str = str(ex)
+            status_code = 'XMLSyntaxError'
+            retry_times = 0
 
         self._print_log(depth, url, status_code, duration_time)
         if retry_times > 0:
