@@ -7,6 +7,7 @@ Content-Type:
         - image/bmp
         - image/tiff
         - application/javascript
+        - application/x-javascript
         - application/json
         - text/css
         - application/pdf
