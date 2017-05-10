@@ -28,6 +28,13 @@ headers:
 
 default_timeout: 20
 
-white-list:
+white-list-host:
     - www.linkedin.com
     - www.miibeian.gov.cn
+    - skypixel-usa.oss-us-west-1.aliyuncs.com
+    - www.instagram.com
+    - www.youtube.com
+    - fonts.googleapis.com
+    - twitter.com
+    - www.apple.com
+
