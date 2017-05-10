@@ -38,3 +38,7 @@ white-list-host:
     - twitter.com
     - www.apple.com
 
+white-list-key:
+    - xmlrpc.php
+    - .link
+    - .url
