@@ -192,6 +192,10 @@ class WebCrawler(object):
             # data:image/png;base64,iVBORw
             return None
 
+        if url.startswith('whatsapp://'):
+            # whatsapp://send?text=https://store.XXX
+            return None
+
         parsed_object = helpers.get_parsed_object_from_url(url)
 
         # remove url fragment
