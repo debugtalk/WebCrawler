@@ -45,3 +45,11 @@ whitelist-key:
     - xmlrpc.php
     - .link
     - .url
+
+whitelist-startswith:
+    - '#' # locator, e.g. #overview
+    - 'javascript' # javascript:void(0);
+    - 'mailto' # mailto:buyenterprise@debugtalk.com
+    - 'tel:' # tel:00852+12345678
+    - 'data:' # data:image/png;base64,iVBORw
+    - 'whatsapp://' # whatsapp://send?text=https://store.XXX

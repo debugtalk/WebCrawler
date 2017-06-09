@@ -146,6 +146,7 @@ class WebCrawler(object):
         self.whitelist_host = config_dict['whitelist-host']
         self.whitelist_url = config_dict['whitelist-url']
         self.whitelist_key = config_dict['whitelist-key']
+        self.whitelist_startswith = config_dict['whitelist-startswith']
         self.grey_env = False
 
     def set_grey_env(self, user_agent, traceid, view_grey):
@@ -167,35 +168,15 @@ class WebCrawler(object):
         if url == "":
             return None
 
-        if url.startswith('#'):
-            # locator, e.g. #overview
-            return None
-
-        if url.startswith('javascript'):
-            # javascript:void(0);
-            return None
-
-        if url.startswith('mailto'):
-            # mailto:buyenterprise@debugtalk.com
-            return None
-
-        if url.startswith('tel:'):
-            # tel:00852+12345678
-            return None
+        for ignore_url_startswith_str in self.whitelist_startswith:
+            if url.startswith(ignore_url_startswith_str):
+                return None
 
         if url.startswith('\\"'):
             # \\"https:\\/\\/store.debugtalk.com\\/guides\\/"
             url = url.encode('utf-8').decode('unicode_escape')\
                 .replace(r'\/', r'/').replace(r'"', r'')
             return url
-
-        if url.startswith('data:'):
-            # data:image/png;base64,iVBORw
-            return None
-
-        if url.startswith('whatsapp://'):
-            # whatsapp://send?text=https://store.XXX
-            return None
 
         parsed_object = helpers.get_parsed_object_from_url(url)
 
