@@ -143,10 +143,10 @@ class WebCrawler(object):
         headers = config_dict['headers']
         self.user_agent = headers['User-Agent']
         self.kwargs['timeout'] = config_dict['default_timeout']
-        self.whitelist_host = config_dict['whitelist-host']
-        self.whitelist_url = config_dict['whitelist-url']
-        self.whitelist_key = config_dict['whitelist-key']
-        self.whitelist_startswith = config_dict['whitelist-startswith']
+        self.whitelist_host = config_dict['whitelist']['host']
+        self.whitelist_fullurls = config_dict['whitelist']['fullurl']
+        self.whitelist_include_keys = config_dict['whitelist']['include-key']
+        self.whitelist_startswith_strs = config_dict['whitelist']['startswith']
         self.grey_env = False
 
     def set_grey_env(self, user_agent, traceid, view_grey):
@@ -168,7 +168,7 @@ class WebCrawler(object):
         if url == "":
             return None
 
-        for ignore_url_startswith_str in self.whitelist_startswith:
+        for ignore_url_startswith_str in self.whitelist_startswith_strs:
             if url.startswith(ignore_url_startswith_str):
                 return None
 
@@ -245,14 +245,14 @@ class WebCrawler(object):
             .format(self.test_counter, depth, url, self.cookie_str, status_code, round(duration_time, 3)), 'DEBUG')
 
     def is_url_has_whitelist_key(self, url):
-        for key in self.whitelist_key:
+        for key in self.whitelist_include_keys:
             if key in url:
                 return True
 
         return False
 
     def get_hyper_links(self, url, depth, retry_times=3):
-        if url in self.whitelist_url:
+        if url in self.whitelist_fullurls:
             return set()
 
         hyper_links_set = set()
