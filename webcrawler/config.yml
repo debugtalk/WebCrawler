@@ -28,7 +28,7 @@ headers:
 
 default_timeout: 20
 
-white-list-host:
+whitelist-host:
     - www.linkedin.com
     - www.miibeian.gov.cn
     - skypixel-usa.oss-us-west-1.aliyuncs.com
@@ -38,10 +38,10 @@ white-list-host:
     - twitter.com
     - www.apple.com
 
-white-list-url:
+whitelist-url:
     - https://cdn.ampproject.org
 
-white-list-key:
+whitelist-key:
     - xmlrpc.php
     - .link
     - .url
