@@ -144,6 +144,7 @@ class WebCrawler(object):
         self.user_agent = headers['User-Agent']
         self.kwargs['timeout'] = config_dict['default_timeout']
         self.white_list_host = config_dict['white-list-host']
+        self.white_list_url = config_dict['white-list-url']
         self.white_list_key = config_dict['white-list-key']
         self.grey_env = False
 
@@ -270,6 +271,9 @@ class WebCrawler(object):
         return False
 
     def get_hyper_links(self, url, depth, retry_times=3):
+        if url in self.white_list_url:
+            return set()
+
         hyper_links_set = set()
         kwargs = copy.deepcopy(self.kwargs)
         if not self.grey_env:

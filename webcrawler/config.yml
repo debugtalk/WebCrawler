@@ -38,6 +38,9 @@ white-list-host:
     - twitter.com
     - www.apple.com
 
+white-list-url:
+    - https://cdn.ampproject.org
+
 white-list-key:
     - xmlrpc.php
     - .link
