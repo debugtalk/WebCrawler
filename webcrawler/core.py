@@ -180,8 +180,9 @@ class WebCrawler(object):
 
         parsed_object = helpers.get_parsed_object_from_url(url)
 
-        # remove url fragment
-        parsed_object = parsed_object._replace(fragment='')
+        # remove url query and url fragment
+        parsed_object = parsed_object._replace(query='')._replace(fragment='')
+
         parsed_object = _make_url_by_referer(parsed_object, referer_url)
 
         return parsed_object.geturl()
