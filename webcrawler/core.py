@@ -42,62 +42,6 @@ def parse_seeds(seeds):
 
     return website_list
 
-def _make_url_by_referer(origin_parsed_obj, referer_url):
-    """
-    @params
-        referer_url: e.g. https://store.debugtalk.com/product/osmo
-        origin_parsed_obj.path e.g.:
-            (1) complete urls: http(s)://store.debugtalk.com/product/phantom-4-pro
-            (2) cdn asset files: //asset1.xcdn.com/assets/xxx.png
-            (3) relative links type1: /category/phantom
-            (4) relative links type2: mavic-pro
-            (5) relative links type3: ../compare-phantom-3
-    @return
-        corresponding result url:
-            (1) http(s)://store.debugtalk.com/product/phantom-4-pro
-            (2) http://asset1.xcdn.com/assets/xxx.png
-            (3) https://store.debugtalk.com/category/phantom
-            (4) https://store.debugtalk.com/product/mavic-pro
-            (5) https://store.debugtalk.com/compare-phantom-3
-    """
-    if origin_parsed_obj.scheme != "":
-        # complete urls, e.g. http(s)://store.debugtalk.com/product/phantom-4-pro
-        return origin_parsed_obj
-
-    elif origin_parsed_obj.netloc != "":
-        # cdn asset files, e.g. //asset1.xcdn.com/assets/xxx.png
-        origin_parsed_obj = origin_parsed_obj._replace(scheme='http')
-        return origin_parsed_obj
-
-    elif origin_parsed_obj.path.startswith('/'):
-        # relative links, e.g. /category/phantom
-        referer_url_parsed_object = helpers.get_parsed_object_from_url(referer_url)
-        origin_parsed_obj = origin_parsed_obj._replace(
-            scheme=referer_url_parsed_object.scheme,
-            netloc=referer_url_parsed_object.netloc
-        )
-        return origin_parsed_obj
-    else:
-        referer_url_parsed_object = helpers.get_parsed_object_from_url(referer_url)
-        path_list = referer_url_parsed_object.path.split('/')
-
-        if origin_parsed_obj.path.startswith('../'):
-            # relative links, e.g. ../compare-phantom-3
-            path_list.pop()
-            path_list[-1] = origin_parsed_obj.path.lstrip('../')
-        else:
-            # relative links, e.g. mavic-pro
-            path_list[-1] = origin_parsed_obj.path
-
-        new_path = '/'.join(path_list)
-        origin_parsed_obj = origin_parsed_obj._replace(path=new_path)
-
-        origin_parsed_obj = origin_parsed_obj._replace(
-            scheme=referer_url_parsed_object.scheme,
-            netloc=referer_url_parsed_object.netloc
-        )
-        return origin_parsed_obj
-
 
 class WebCrawler(object):
 
@@ -179,13 +123,7 @@ class WebCrawler(object):
                 .replace(r'\/', r'/').replace(r'"', r'')
             return url
 
-        parsed_object = helpers.get_parsed_object_from_url(url)
-
-        # remove url query and url fragment
-        parsed_object = parsed_object._replace(query='')._replace(fragment='')
-
-        parsed_object = _make_url_by_referer(parsed_object, referer_url)
-
+        parsed_object = helpers.get_parsed_object_from_url(url, referer_url)
         return parsed_object.geturl()
 
     def get_url_type(self, resp, req_host):

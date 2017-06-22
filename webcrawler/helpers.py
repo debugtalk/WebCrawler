@@ -7,21 +7,97 @@ from termcolor import colored
 
 try:
     # Python3
-    from urllib.parse import urlparse
+    import urllib.parse as urlparse
+    from urllib.parse import urlencode
 except ImportError:
     # Python2
-    from urlparse import urlparse
+    import urlparse
+    from urllib import urlencode
 
 urlparsed_object_mapping = {}
 
-def get_parsed_object_from_url(url):
+def get_parsed_object_from_url(url, referer_url=None):
     if url in urlparsed_object_mapping:
         return urlparsed_object_mapping[url]
 
-    parsed_object = urlparse(url)
+    parsed_object = get_parsed_object_from_url_without_extra_info(url)
+    if referer_url:
+        parsed_object = _make_url_by_referer(parsed_object, referer_url)
+
     urlparsed_object_mapping[url] = parsed_object
     return parsed_object
 
+def get_parsed_object_from_url_without_extra_info(url):
+    parsed_object = urlparse.urlparse(url)
+
+    # remove unwanted query items
+    query_dict = urlparse.parse_qs(parsed_object.query)
+    for key in ['from', 'nonamp']:
+        query_dict.pop(key, None)
+
+    new_query = urlencode(query_dict)
+    parsed_object = parsed_object._replace(query=new_query)
+
+    # remove url fragment
+    parsed_object = parsed_object._replace(fragment='')
+
+    return parsed_object
+
+def _make_url_by_referer(origin_parsed_obj, referer_url):
+    """
+    @params
+        referer_url: e.g. https://store.debugtalk.com/product/osmo
+        origin_parsed_obj.path e.g.:
+            (1) complete urls: http(s)://store.debugtalk.com/product/phantom-4-pro
+            (2) cdn asset files: //asset1.xcdn.com/assets/xxx.png
+            (3) relative links type1: /category/phantom
+            (4) relative links type2: mavic-pro
+            (5) relative links type3: ../compare-phantom-3
+    @return
+        corresponding result url:
+            (1) http(s)://store.debugtalk.com/product/phantom-4-pro
+            (2) http://asset1.xcdn.com/assets/xxx.png
+            (3) https://store.debugtalk.com/category/phantom
+            (4) https://store.debugtalk.com/product/mavic-pro
+            (5) https://store.debugtalk.com/compare-phantom-3
+    """
+    if origin_parsed_obj.scheme != "":
+        # complete urls, e.g. http(s)://store.debugtalk.com/product/phantom-4-pro
+        return origin_parsed_obj
+
+    elif origin_parsed_obj.netloc != "":
+        # cdn asset files, e.g. //asset1.xcdn.com/assets/xxx.png
+        origin_parsed_obj = origin_parsed_obj._replace(scheme='http')
+        return origin_parsed_obj
+
+    elif origin_parsed_obj.path.startswith('/'):
+        # relative links, e.g. /category/phantom
+        referer_url_parsed_object = get_parsed_object_from_url(referer_url)
+        origin_parsed_obj = origin_parsed_obj._replace(
+            scheme=referer_url_parsed_object.scheme,
+            netloc=referer_url_parsed_object.netloc
+        )
+        return origin_parsed_obj
+    else:
+        referer_url_parsed_object = get_parsed_object_from_url(referer_url)
+        path_list = referer_url_parsed_object.path.split('/')
+
+        if origin_parsed_obj.path.startswith('../'):
+            # relative links, e.g. ../compare-phantom-3
+            path_list.pop()
+            path_list[-1] = origin_parsed_obj.path.lstrip('../')
+        else:
+            # relative links, e.g. mavic-pro
+            path_list[-1] = origin_parsed_obj.path
+
+        new_path = '/'.join(path_list)
+        origin_parsed_obj = origin_parsed_obj._replace(path=new_path)
+
+        origin_parsed_obj = origin_parsed_obj._replace(
+            scheme=referer_url_parsed_object.scheme,
+            netloc=referer_url_parsed_object.netloc
+        )
+        return origin_parsed_obj
 
 def color_logging(text, log_level='info', color=None):
     log_level = log_level.upper()
