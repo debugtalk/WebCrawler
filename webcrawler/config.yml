@@ -34,6 +34,8 @@ whitelist:
         - www.miibeian.gov.cn
         - skypixel-usa.oss-us-west-1.aliyuncs.com
         - www.instagram.com
+        - instagram.com
+        - facebook.com
         - www.youtube.com
         - fonts.googleapis.com
         - twitter.com

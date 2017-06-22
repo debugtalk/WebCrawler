@@ -83,15 +83,21 @@ class WebCrawler(object):
         }
         config_file = os.path.join(os.path.dirname(__file__), 'config.yml')
         config_dict = helpers.load_yaml_file(config_file)
-        self.url_type_config = config_dict['Content-Type']
-        headers = config_dict['headers']
-        self.user_agent = headers['User-Agent']
-        self.kwargs['timeout'] = config_dict['default_timeout']
-        self.whitelist_host = config_dict['whitelist']['host']
-        self.whitelist_fullurls = config_dict['whitelist']['fullurl']
-        self.whitelist_include_keys = config_dict['whitelist']['include-key']
-        self.whitelist_startswith_strs = config_dict['whitelist']['startswith']
-        self.whitelist_link_type = config_dict['whitelist']['link-type']
+
+        self.url_type_config = config_dict.get('Content-Type', {})
+
+        headers = config_dict.get('headers', {})
+        self.user_agent = headers.get('User-Agent', {})
+
+        self.kwargs['timeout'] = config_dict.get('default_timeout', 20)
+
+        whitelist_configs = config_dict.get('whitelist', {})
+        self.whitelist_host = whitelist_configs.get('host', [])
+        self.whitelist_fullurls = whitelist_configs.get('fullurl', [])
+        self.whitelist_include_keys = whitelist_configs.get('include-key', [])
+        self.whitelist_startswith_strs = whitelist_configs.get('startswith', [])
+        self.whitelist_link_type = whitelist_configs.get('link-type', [])
+
         self.grey_env = False
 
     def set_grey_env(self, user_agent, traceid, view_grey):
@@ -133,7 +139,7 @@ class WebCrawler(object):
             url_type = 'IGNORE'
             return url_type
 
-        if content_type in self.url_type_config['static']:
+        if content_type in self.url_type_config.get('static', []):
             url_type = 'static'
         elif req_host not in self.include_hosts_set:
             url_type = 'external'
