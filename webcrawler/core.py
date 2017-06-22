@@ -147,6 +147,7 @@ class WebCrawler(object):
         self.whitelist_fullurls = config_dict['whitelist']['fullurl']
         self.whitelist_include_keys = config_dict['whitelist']['include-key']
         self.whitelist_startswith_strs = config_dict['whitelist']['startswith']
+        self.whitelist_link_type = config_dict['whitelist']['link-type']
         self.grey_env = False
 
     def set_grey_env(self, user_agent, traceid, view_grey):
@@ -226,6 +227,11 @@ class WebCrawler(object):
             url = link.get('href') or link.get('src')
             if url is None:
                 continue
+
+            link_type = link.get('type', None)
+            if link_type and link_type in self.whitelist_link_type:
+                continue
+
             raw_links_set.add(url)
 
         parsed_urls_set = self.parse_urls(raw_links_set, referer_url)

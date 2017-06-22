@@ -51,3 +51,5 @@ whitelist:
         - xmlrpc.php
         - .link
         - .url
+    link-type:
+        - 'application/json+oembed'
