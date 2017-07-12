@@ -96,7 +96,6 @@ class WebCrawler(object):
         self.whitelist_fullurls = whitelist_configs.get('fullurl', [])
         self.whitelist_include_keys = whitelist_configs.get('include-key', [])
         self.whitelist_startswith_strs = whitelist_configs.get('startswith', [])
-        self.whitelist_link_type = whitelist_configs.get('link-type', [])
 
         self.grey_env = False
 
@@ -170,10 +169,6 @@ class WebCrawler(object):
         for link in link_elements_list:
             url = link.get('href') or link.get('src')
             if url is None:
-                continue
-
-            link_type = link.get('type', None)
-            if link_type and link_type in self.whitelist_link_type:
                 continue
 
             raw_links_set.add(url)
