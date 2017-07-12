@@ -49,6 +49,7 @@ whitelist:
         - 'tel:' # tel:00852+12345678
         - 'data:' # data:image/png;base64,iVBORw
         - 'whatsapp://' # whatsapp://send?text=https://store.XXX
+        - 'https://store.dji.com/guides/?from=djistorepage'
     include-key:
         - xmlrpc.php
         - .link

@@ -128,8 +128,8 @@ class WebCrawler(object):
                 .replace(r'\/', r'/').replace(r'"', r'')
             return url
 
-        parsed_object = helpers.get_parsed_object_from_url(url, referer_url)
-        return parsed_object.geturl()
+        parsed_url = helpers.make_url_with_referer(url, referer_url)
+        return parsed_url
 
     def get_url_type(self, resp, req_host):
         try:

@@ -16,38 +16,27 @@ except ImportError:
 
 urlparsed_object_mapping = {}
 
-def get_parsed_object_from_url(url, referer_url=None):
+def get_parsed_object_from_url(url):
     if url in urlparsed_object_mapping:
         return urlparsed_object_mapping[url]
 
     parsed_object = get_parsed_object_from_url_without_extra_info(url)
-    if referer_url:
-        parsed_object = _make_url_by_referer(parsed_object, referer_url)
-
     urlparsed_object_mapping[url] = parsed_object
     return parsed_object
 
 def get_parsed_object_from_url_without_extra_info(url):
     parsed_object = urlparse.urlparse(url)
 
-    # remove unwanted query items
-    query_dict = urlparse.parse_qs(parsed_object.query)
-    for key in ['from', 'nonamp']:
-        query_dict.pop(key, None)
-
-    new_query = urlencode(query_dict)
-    parsed_object = parsed_object._replace(query=new_query)
-
     # remove url fragment
     parsed_object = parsed_object._replace(fragment='')
 
     return parsed_object
 
-def _make_url_by_referer(origin_parsed_obj, referer_url):
+def make_url_with_referer(url, referer_url):
     """
     @params
         referer_url: e.g. https://store.debugtalk.com/product/osmo
-        origin_parsed_obj.path e.g.:
+        url e.g.:
             (1) complete urls: http(s)://store.debugtalk.com/product/phantom-4-pro
             (2) cdn asset files: //asset1.xcdn.com/assets/xxx.png
             (3) relative links type1: /category/phantom
@@ -61,14 +50,16 @@ def _make_url_by_referer(origin_parsed_obj, referer_url):
             (4) https://store.debugtalk.com/product/mavic-pro
             (5) https://store.debugtalk.com/compare-phantom-3
     """
+    origin_parsed_obj = get_parsed_object_from_url(url)
+
     if origin_parsed_obj.scheme != "":
         # complete urls, e.g. http(s)://store.debugtalk.com/product/phantom-4-pro
-        return origin_parsed_obj
+        return url
 
     elif origin_parsed_obj.netloc != "":
         # cdn asset files, e.g. //asset1.xcdn.com/assets/xxx.png
         origin_parsed_obj = origin_parsed_obj._replace(scheme='http')
-        return origin_parsed_obj
+        return origin_parsed_obj.geturl()
 
     elif origin_parsed_obj.path.startswith('/'):
         # relative links, e.g. /category/phantom
@@ -77,7 +68,7 @@ def _make_url_by_referer(origin_parsed_obj, referer_url):
             scheme=referer_url_parsed_object.scheme,
             netloc=referer_url_parsed_object.netloc
         )
-        return origin_parsed_obj
+        return origin_parsed_obj.geturl()
     else:
         referer_url_parsed_object = get_parsed_object_from_url(referer_url)
         path_list = referer_url_parsed_object.path.split('/')
@@ -97,7 +88,7 @@ def _make_url_by_referer(origin_parsed_obj, referer_url):
             scheme=referer_url_parsed_object.scheme,
             netloc=referer_url_parsed_object.netloc
         )
-        return origin_parsed_obj
+        return origin_parsed_obj.geturl()
 
 def color_logging(text, log_level='info', color=None):
     log_level = log_level.upper()
