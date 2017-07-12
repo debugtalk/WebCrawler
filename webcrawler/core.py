@@ -395,10 +395,7 @@ class WebCrawler(object):
 
     def create_threads(self, concurrency):
         for _ in range(concurrency):
-            thread = threading.Thread(
-                target=self.visit_url,
-                args=()
-            )
+            thread = threading.Thread(target=self.visit_url)
             thread.daemon = True
             thread.start()
 
