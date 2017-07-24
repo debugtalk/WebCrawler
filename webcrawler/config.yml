@@ -42,6 +42,7 @@ whitelist:
         - www.apple.com
     fullurl:
         - https://cdn.ampproject.org
+        - https://link.dji.com/u/nprefill.js
     startswith:
         - '#' # locator, e.g. #overview
         - 'javascript' # javascript:void(0);
