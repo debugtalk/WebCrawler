@@ -9,6 +9,7 @@ import requests
 import lxml.html
 import multiprocessing
 
+
 from .helpers import color_logging
 from .url_queue import UrlQueue
 from . import helpers
@@ -304,6 +305,7 @@ class WebCrawler(object):
         for parent_url, hyper_links_set in self.web_urls_mapping.items():
             if url in hyper_links_set:
                 referer_set.add(parent_url)
+
         return referer_set
 
     def get_sorted_categorised_urls(self):
@@ -312,6 +314,11 @@ class WebCrawler(object):
         ).items()
 
     def print_categorised_urls(self):
+        '''
+        Print error URLs been classified by HTTP error code,named as HTTP code error block.
+        In HTTP code error block, URLs been classified by HOST.
+        URLs defined as the URL of which page contains the error links,instead of error link.
+        '''
 
         def _print(status_code, urls_list, log_level, show_referer=False):
             if isinstance(status_code, str):
@@ -319,22 +326,43 @@ class WebCrawler(object):
             elif isinstance(status_code, int):
                 output = "HTTP status code {}, total: {}.\n".format(status_code, len(urls_list))
 
-            output += "urls list: \n"
+            host_dict = {}
             for url in urls_list:
-                output += url
-                if not str(status_code).isdigit():
-                    output += ", {}: {}".format(status_code, self.bad_urls_mapping[url])
-                if show_referer:
-                    # only show 5 referers if referer urls number is greater than 5
-                    referer_urls = self.get_referer_urls_set(url)
-                    referer_urls_num = len(referer_urls)
-                    if referer_urls_num > 5:
-                        referer_urls = list(referer_urls)[:5]
-                        output += ", referer_urls: {}".format(referer_urls)
-                        output += " total {}, displayed 5.".format(referer_urls_num)
-                    else:
-                        output += ", referer_urls: {}".format(referer_urls)
-                output += '\n'
+                referer_url_list = self.get_referer_urls_set(url)
+                if referer_url_list and referer_url_list is not []:
+                    host_url = referer_url_list[0].split("/")[2]
+                else:
+                    host_url = "root"
+
+                if host_dict.has_key(host_url):#Build {host:[url_list]}
+                    temp_list = host_dict[host_url]
+                    temp_list.append(url)
+                    host_dict[host_url] = temp_list
+                else:
+                    temp_list = []
+                    temp_list.append(url)
+                    host_dict[host_url] = temp_list
+
+            output += "urls list: \n"
+
+            for host in host_dict.keys():
+                output += "\n---HOST:    "+host + "\n"
+                for url in host_dict[host]:
+                    output += url
+                    if not str(status_code).isdigit():
+                        #output += ", {}: {}".format(status_code, self.bad_urls_mapping[url])
+                        pass
+                    if show_referer:
+                        # only show 5 referers if referer urls number is greater than 5
+                        referer_urls = self.get_referer_urls_set(url)
+                        referer_urls_num = len(referer_urls)
+                        if referer_urls_num > 5:
+                            referer_urls = list(referer_urls)[:5]
+                            output += ", referer_urls: {}".format(referer_urls)
+                            output += " total {}, displayed 5.".format(referer_urls_num)
+                        else:
+                            output += ", referer_urls: {}".format(referer_urls)
+                    output += '\n'
 
             color_logging(output, log_level)
 
