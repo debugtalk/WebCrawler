@@ -334,7 +334,7 @@ class WebCrawler(object):
                 else:
                     host_url = "root"
 
-                if host_dict.has_key(host_url):#Build {host:[url_list]}
+                if host_url in host_dict:#Build {host:[url_list]}
                     temp_list = host_dict[host_url]
                     temp_list.append(url)
                     host_dict[host_url] = temp_list
