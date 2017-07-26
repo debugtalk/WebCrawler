@@ -304,7 +304,6 @@ class WebCrawler(object):
         for parent_url, hyper_links_set in self.web_urls_mapping.items():
             if url in hyper_links_set:
                 referer_set.add(parent_url)
-
         return referer_set
 
     def get_sorted_categorised_urls(self):
