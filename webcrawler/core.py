@@ -346,7 +346,7 @@ class WebCrawler(object):
             output += "urls list: \n"
 
             for host in host_dict:
-                output += "\n---HOST:    "+host + "\n"
+                output += "---HOST:    "+host + "\n"
                 for url in host_dict[host]:
                     output += url
                     if not str(status_code).isdigit():
