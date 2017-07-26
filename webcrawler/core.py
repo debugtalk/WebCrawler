@@ -328,7 +328,7 @@ class WebCrawler(object):
 
             host_dict = {}
             for url in urls_list:
-                referer_url_list = self.get_referer_urls_set(url)
+                referer_url_list = list(self.get_referer_urls_set(url))
                 if referer_url_list and referer_url_list is not []:
                     host_url = referer_url_list[0].split("/")[2]
                 else:
