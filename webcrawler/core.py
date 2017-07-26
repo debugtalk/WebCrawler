@@ -350,7 +350,7 @@ class WebCrawler(object):
                 for url in host_dict[host]:
                     output += url
                     if not str(status_code).isdigit():
-                        #output += ", {}: {}".format(status_code, self.bad_urls_mapping[url])
+                        output += ", {}: {}".format(status_code, self.bad_urls_mapping[url])
                         pass
                     if show_referer:
                         # only show 5 referers if referer urls number is greater than 5
