@@ -9,7 +9,6 @@ import requests
 import lxml.html
 import multiprocessing
 
-
 from .helpers import color_logging
 from .url_queue import UrlQueue
 from . import helpers
@@ -346,7 +345,7 @@ class WebCrawler(object):
             output += "urls list: \n"
 
             for host in host_dict:
-                output += "---HOST:    "+host + "\n"
+                output += "---HOST:    " + host + "\n"
                 for url in host_dict[host]:
                     output += url
                     if not str(status_code).isdigit():
