@@ -345,7 +345,7 @@ class WebCrawler(object):
 
             output += "urls list: \n"
 
-            for host in host_dict.keys():
+            for host in host_dict:
                 output += "\n---HOST:    "+host + "\n"
                 for url in host_dict[host]:
                     output += url
