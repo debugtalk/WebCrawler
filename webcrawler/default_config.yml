@@ -32,6 +32,7 @@ whitelist:
     host:
         - www.linkedin.com
         - www.miibeian.gov.cn
+        - skypixel-usa.oss-us-west-1.aliyuncs.com
         - www.instagram.com
         - instagram.com
         - facebook.com
@@ -41,6 +42,7 @@ whitelist:
         - www.apple.com
     fullurl:
         - https://cdn.ampproject.org
+        - https://link.dji.com/u/nprefill.js
     startswith:
         - '#' # locator, e.g. #overview
         - 'javascript' # javascript:void(0);
@@ -48,6 +50,7 @@ whitelist:
         - 'tel:' # tel:00852+12345678
         - 'data:' # data:image/png;base64,iVBORw
         - 'whatsapp://' # whatsapp://send?text=https://store.XXX
+        - 'https://store.dji.com/guides/?from=djistorepage'
     include-key:
         - xmlrpc.php
         - .link
