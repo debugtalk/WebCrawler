@@ -106,11 +106,11 @@ def color_logging(text, log_level='info', color=None):
         logging.info(colored(text, color, attrs=['bold']))
 
 def load_json_file(json_file):
-    with open(json_file, 'r+') as f:
+    with open(json_file, 'r') as f:
         return f.read()
 
 def load_yaml_file(yaml_file):
-    with open(yaml_file, 'r+') as stream:
+    with open(yaml_file, 'r') as stream:
         return yaml.load(stream)
 
 def get_md5(content):
