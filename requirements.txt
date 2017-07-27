@@ -1,5 +1,0 @@
-termcolor
-PyYAML
-future
-lxml
-requests

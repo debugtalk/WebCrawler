@@ -1,0 +1,6 @@
+termcolor
+PyYAML
+future
+lxml
+requests
+-e git+https://github.com/debugtalk/mail-hepler.git#egg=mail-helper

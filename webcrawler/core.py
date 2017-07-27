@@ -461,23 +461,20 @@ class WebCrawler(object):
             helpers.save_to_yaml(self.url_queue.get_visited_urls(), visited_urls_log_path)
             color_logging("Save visited urls in YAML file: {}".format(visited_urls_log_path))
 
-    def gen_mail_content(self, jenkins_log_url):
+    def gen_mail_html_content(self, jenkins_log_url):
         website_urls = [website['url'] for website in self.website_list]
-        content = "Tested websites: {}<br/>".format(','.join(website_urls))
-        content += "Total tested urls number: {}<br/><br/>"\
+        html_content = "Tested websites: {}<br/>".format(','.join(website_urls))
+        html_content += "Total tested urls number: {}<br/><br/>"\
             .format(self.url_queue.get_visited_urls_count())
-        content += "Categorised urls number by HTTP Status Code: <br/>"
+        html_content += "Categorised urls number by HTTP Status Code: <br/>"
         for status_code, urls_list in self.get_sorted_categorised_urls():
             if status_code.isdigit():
-                content += "status code {}: {}".format(status_code, len(urls_list))
+                html_content += "status code {}: {}".format(status_code, len(urls_list))
             else:
-                content += "{} urls: {}".format(status_code, len(urls_list))
+                html_content += "{} urls: {}".format(status_code, len(urls_list))
 
-            content += "<br/>"
+            html_content += "<br/>"
 
-        content += "<br/>Detailed Jenkins log info: {}".format(jenkins_log_url)
-        mail_content = {
-            'type': 'html',
-            'content': content
-        }
-        return mail_content
+        html_content += "<br/>Detailed Jenkins log info: {}".format(jenkins_log_url)
+
+        return html_content

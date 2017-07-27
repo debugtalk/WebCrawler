@@ -14,22 +14,17 @@ A simple web crawler, mainly targets for link validation test.
 - send test result by mail, through SMTP protocol or mailgun service
 - cancel jobs
 
-## Install
-
-`WebCrawler` can be installed as a CLI tool, or just be used as a script. You can make your preference choice.
-
-If you want to install `WebCrawler`, execute the following command, and all dependencies will be installed as well. Then you can use `webcrawler` CLI tool.
+## Installation/Upgrade
 
 ```bash
-$ python setup.py install
-$ webcrawler -h
+$ pip install -U git+https://github.com/debugtalk/WebCrawler.git#egg=WebCrawler
 ```
 
-If you prefer to use `WebCrawler` as a script, you should install dependencies first, then you can start `WebCrawler` through `python main.py` entrance.
+To ensure the installation or upgrade is successful, you can execute command `ate -V` to see if you can get the correct version number.
 
 ```bash
-$ pip install -r requirements.txt
-$ python main.py -h
+$ webcrawler -V
+0.2.0
 ```
 
 ## Usage

@@ -1,11 +1,11 @@
-__version__ = '0.1.2'
+__version__ = '0.2.0'
 
 import os
 import sys
 import logging
 import argparse
 from .core import WebCrawler
-from .mail import send_mail
+from mail_helper import MailgunHelper
 from .helpers import color_logging
 
 def main():
@@ -14,6 +14,9 @@ def main():
     parser = argparse.ArgumentParser(
         description='A web crawler for testing website links validation.')
 
+    parser.add_argument(
+        '-V', '--version', dest='version', action='store_true',
+        help="show version")
     parser.add_argument(
         '--log-level', default='INFO',
         help="Specify logging level, default is INFO.")
@@ -36,18 +39,6 @@ def main():
         '--job-url', default='0', help="Specify jenkins job url.")
     parser.add_argument(
         '--build-number', default='0', help="Specify jenkins build number.")
-    parser.add_argument(
-        '--smtp-host-port', help="Specify email SMTP host and port.")
-    parser.add_argument(
-        '--mailgun-id', help="Specify mailgun api id.")
-    parser.add_argument(
-        '--mailgun-key', help="Specify mailgun api key.")
-    parser.add_argument(
-        '--email-auth-username', help="Specify email SMTP auth account.")
-    parser.add_argument(
-        '--email-auth-password', help="Specify email SMTP auth account.")
-    parser.add_argument(
-        '--email-recepients', help="Specify email recepients.")
 
     parser.add_argument('--save-results', dest='save_results', action='store_true')
     parser.add_argument('--not-save-results', dest='save_results', action='store_false')
@@ -60,16 +51,20 @@ def main():
     parser.add_argument("--grey-view-grey",
                         help="Specify grey environment cookie view_gray.")
 
+    mailer = MailgunHelper(parser)
     args = parser.parse_args()
+
+    if args.version:
+        print(__version__)
+        exit(0)
 
     log_level = getattr(logging, args.log_level.upper())
     logging.basicConfig(level=log_level)
     color_logging("args: %s" % args)
 
-    main_crawler(args)
+    main_crawler(args, mailer)
 
-def main_crawler(args):
-
+def main_crawler(args, mailer=None):
     include_hosts = args.include_hosts.split(',') if args.include_hosts else []
     cookies_list = args.cookies.split('|') if args.cookies else ['']
     job_url = args.job_url
@@ -100,9 +95,11 @@ def main_crawler(args):
                 args.concurrency
             )
 
-        jenkins_log_url = "{}/{}/console".format(job_url, build_number)
-        mail_content = web_crawler.gen_mail_content(jenkins_log_url)
-        send_mail(args, mail_content)
+        if mailer and mailer.config_ready:
+            subject = "test reuslt of %s" % args.seeds
+            jenkins_log_url = "{}/{}/console".format(job_url, build_number)
+            html_content = web_crawler.gen_mail_html_content(jenkins_log_url)
+            mailer.send_mail(subject, html=html_content)
     except KeyboardInterrupt:
         canceled = True
         color_logging("Canceling...", color='red')

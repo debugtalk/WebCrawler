@@ -29,7 +29,11 @@ setup(
         'PyYAML',
         'future',
         'lxml',
-        'requests'
+        'requests',
+        'mail-helper'
+    ],
+    dependency_links=[
+        "git+https://github.com/debugtalk/mail-hepler.git#egg=mail-helper"
     ],
     classifiers=[
         'Programming Language :: Python :: 2.7',
