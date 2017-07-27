@@ -21,7 +21,7 @@ setup(
     license='MIT',
     packages=find_packages(exclude=['tests']),
     package_data={
-        'webcrawler': ['config.yml'],
+        'webcrawler': ['default_config.yml'],
     },
     keywords='diff compare',
     install_requires=[

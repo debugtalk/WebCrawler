@@ -24,32 +24,37 @@ To ensure the installation or upgrade is successful, you can execute command `at
 
 ```bash
 $ webcrawler -V
-0.2.0
+0.2.1
 ```
 
 ## Usage
 
 ```text
-$ python main.py -h
-# same as:
 $ webcrawler -h
-usage: main.py [-h] [--log-level LOG_LEVEL] [--seeds SEEDS]
-               [--include-hosts INCLUDE_HOSTS] [--cookies COOKIES]
-               [--crawl-mode CRAWL_MODE] [--max-depth MAX_DEPTH]
-               [--concurrency CONCURRENCY] [--job-url JOB_URL]
-               [--build-number BUILD_NUMBER] [--smtp-host-port SMTP_HOST_PORT]
-               [--mailgun-id MAILGUN_ID] [--mailgun-key MAILGUN_KEY]
-               [--email-auth-username EMAIL_AUTH_USERNAME]
-               [--email-auth-password EMAIL_AUTH_PASSWORD]
-               [--email-recepients EMAIL_RECEPIENTS] [--save-results]
-               [--not-save-results]
+# same as:
+$ python main.py -h
+usage: main.py [-h] [-V] [--log-level LOG_LEVEL] [--config-file CONFIG_FILE]
+               [--seeds SEEDS] [--include-hosts INCLUDE_HOSTS]
+               [--cookies COOKIES] [--crawl-mode CRAWL_MODE]
+               [--max-depth MAX_DEPTH] [--concurrency CONCURRENCY]
+               [--job-url JOB_URL] [--build-number BUILD_NUMBER]
+               [--save-results] [--not-save-results]
+               [--grey-user-agent GREY_USER_AGENT]
+               [--grey-traceid GREY_TRACEID] [--grey-view-grey GREY_VIEW_GREY]
+               [--mailgun-api-id MAILGUN_API_ID]
+               [--mailgun-api-key MAILGUN_API_KEY]
+               [--email-sender EMAIL_SENDER]
+               [--email-recepients EMAIL_RECEPIENTS]
 
 A web crawler for testing website links validation.
 
 optional arguments:
   -h, --help            show this help message and exit
+  -V, --version         show version
   --log-level LOG_LEVEL
                         Specify logging level, default is INFO.
+  --config-file CONFIG_FILE
+                        Specify config file path.
   --seeds SEEDS         Specify crawl seed url(s), several urls can be
                         specified with pipe; if auth needed, seeds can be
                         specified like user1:pwd1@url1|user2:pwd2@url2
@@ -66,23 +71,31 @@ optional arguments:
   --job-url JOB_URL     Specify jenkins job url.
   --build-number BUILD_NUMBER
                         Specify jenkins build number.
-  --smtp-host-port SMTP_HOST_PORT
-                        Specify email SMTP host and port.
-  --mailgun-id MAILGUN_ID
-                        Specify mailgun api id.
-  --mailgun-key MAILGUN_KEY
-                        Specify mailgun api key.
-  --email-auth-username EMAIL_AUTH_USERNAME
-                        Specify email SMTP auth account.
-  --email-auth-password EMAIL_AUTH_PASSWORD
-                        Specify email SMTP auth account.
-  --email-recepients EMAIL_RECEPIENTS
-                        Specify email recepients.
   --save-results
   --not-save-results
+  --grey-user-agent GREY_USER_AGENT
+                        Specify grey environment header User-Agent.
+  --grey-traceid GREY_TRACEID
+                        Specify grey environment cookie traceid.
+  --grey-view-grey GREY_VIEW_GREY
+                        Specify grey environment cookie view_gray.
+  --mailgun-api-id MAILGUN_API_ID
+                        Specify mailgun api id.
+  --mailgun-api-key MAILGUN_API_KEY
+                        Specify mailgun api key.
+  --email-sender EMAIL_SENDER
+                        Specify email sender.
+  --email-recepients EMAIL_RECEPIENTS
+                        Specify email recepients.
 ```
 
 ## Examples
+
+Specify config file.
+
+```bash
+$ webcrawler --seeds http://debugtalk.com --crawl-mode bfs --max-depth 5 --config-file path/to/config.yml
+```
 
 Crawl in BFS mode with 20 concurrent workers, and set maximum depth to 5.
 

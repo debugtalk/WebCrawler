@@ -45,7 +45,7 @@ def parse_seeds(seeds):
 
 class WebCrawler(object):
 
-    def __init__(self, seeds, include_hosts, logs_folder):
+    def __init__(self, seeds, include_hosts, logs_folder, config_file=None):
         self.website_list = parse_seeds(seeds)
         self.include_hosts_set = set(include_hosts)
         self.test_counter = 0
@@ -60,7 +60,7 @@ class WebCrawler(object):
             if website['auth']:
                 self.auth_dict[host] = website['auth']
 
-        self.load_config()
+        self.load_config(config_file)
         self.categorised_urls = {}
         self.web_urls_mapping = {}
         self.bad_urls_mapping = {}
@@ -76,12 +76,18 @@ class WebCrawler(object):
             self.url_queue.remove_visited_url(website_url)
             self.url_queue.add_unvisited_url(website_url)
 
-    def load_config(self):
+    def load_config(self, config_file):
         self.kwargs = {
             'headers': {},
             'cookies': {}
         }
-        config_file = os.path.join(os.path.dirname(__file__), 'config.yml')
+
+        if config_file:
+            if not os.path.isabs(config_file):
+                config_file = os.path.join(os.getcwd(), config_file)
+        else:
+            config_file = os.path.join(os.path.dirname(__file__), 'default_config.yml')
+
         config_dict = helpers.load_yaml_file(config_file)
 
         self.url_type_config = config_dict.get('Content-Type', {})

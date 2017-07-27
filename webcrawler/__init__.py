@@ -1,4 +1,4 @@
-__version__ = '0.2.0'
+__version__ = '0.2.1'
 
 import os
 import sys
@@ -20,6 +20,8 @@ def main():
     parser.add_argument(
         '--log-level', default='INFO',
         help="Specify logging level, default is INFO.")
+    parser.add_argument(
+        '--config-file', help="Specify config file path.")
     parser.add_argument(
         '--seeds', default='http://debugtalk.com',
         help="Specify crawl seed url(s), several urls can be specified with pipe; \
@@ -71,7 +73,7 @@ def main_crawler(args, mailer=None):
     build_number = args.build_number
     logs_folder = os.path.join(os.getcwd(), "logs", '{}'.format(build_number))
 
-    web_crawler = WebCrawler(args.seeds, include_hosts, logs_folder)
+    web_crawler = WebCrawler(args.seeds, include_hosts, logs_folder, args.config_file)
 
     # set grey environment
     if args.grey_user_agent and args.grey_traceid and args.grey_view_grey:
