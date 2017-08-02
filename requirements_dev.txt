@@ -3,4 +3,4 @@ PyYAML
 future
 lxml
 requests
--e git+https://github.com/debugtalk/mail-hepler.git#egg=mail-helper
+-e git+https://github.com/debugtalk/jenkins-mail-py.git#egg=jenkins-mail-py

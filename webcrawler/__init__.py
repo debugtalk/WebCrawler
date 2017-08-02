@@ -1,11 +1,11 @@
-__version__ = '0.2.1'
+__version__ = '0.2.2'
 
 import os
 import sys
 import logging
 import argparse
 from .core import WebCrawler
-from mail_helper import MailgunHelper
+from jenkins_mail_py import MailgunHelper
 from .helpers import color_logging
 
 def main():
@@ -37,10 +37,6 @@ def main():
         '--max-depth', default=5, type=int, help="Specify max crawl depth.")
     parser.add_argument(
         '--concurrency', help="Specify concurrent workers number.")
-    parser.add_argument(
-        '--job-url', default='0', help="Specify jenkins job url.")
-    parser.add_argument(
-        '--build-number', default='0', help="Specify jenkins build number.")
 
     parser.add_argument('--save-results', dest='save_results', action='store_true')
     parser.add_argument('--not-save-results', dest='save_results', action='store_false')

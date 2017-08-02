@@ -30,10 +30,10 @@ setup(
         'future',
         'lxml',
         'requests',
-        'mail-helper'
+        'jenkins-mail-py'
     ],
     dependency_links=[
-        "git+https://github.com/debugtalk/mail-hepler.git#egg=mail-helper"
+        "git+https://github.com/debugtalk/jenkins-mail-py.git#egg=jenkins-mail-py"
     ],
     classifiers=[
         'Programming Language :: Python :: 2.7',
