@@ -65,9 +65,8 @@ def main():
 def main_crawler(args, mailer=None):
     include_hosts = args.include_hosts.split(',') if args.include_hosts else []
     cookies_list = args.cookies.split('|') if args.cookies else ['']
-    job_url = args.job_url
-    build_number = args.build_number
-    logs_folder = os.path.join(os.getcwd(), "logs", '{}'.format(build_number))
+    jenkins_build_number = args.jenkins_build_number
+    logs_folder = os.path.join(os.getcwd(), "logs", '{}'.format(jenkins_build_number))
 
     web_crawler = WebCrawler(args.seeds, include_hosts, logs_folder, args.config_file)
 
@@ -94,10 +93,9 @@ def main_crawler(args, mailer=None):
             )
 
         if mailer and mailer.config_ready:
-            subject = "test reuslt of %s" % args.seeds
-            jenkins_log_url = "{}/{}/console".format(job_url, build_number)
-            html_content = web_crawler.gen_mail_html_content(jenkins_log_url)
-            mailer.send_mail(subject, html=html_content)
+            subject = "%s" % args.seeds
+            content = web_crawler.gen_mail_html_content()
+            mailer.send_mail(subject, content=content)
     except KeyboardInterrupt:
         canceled = True
         color_logging("Canceling...", color='red')

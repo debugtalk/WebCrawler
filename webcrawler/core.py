@@ -467,7 +467,7 @@ class WebCrawler(object):
             helpers.save_to_yaml(self.url_queue.get_visited_urls(), visited_urls_log_path)
             color_logging("Save visited urls in YAML file: {}".format(visited_urls_log_path))
 
-    def gen_mail_html_content(self, jenkins_log_url):
+    def gen_mail_html_content(self):
         website_urls = [website['url'] for website in self.website_list]
         html_content = "Tested websites: {}<br/>".format(','.join(website_urls))
         html_content += "Total tested urls number: {}<br/><br/>"\
@@ -480,7 +480,5 @@ class WebCrawler(object):
                 html_content += "{} urls: {}".format(status_code, len(urls_list))
 
             html_content += "<br/>"
-
-        html_content += "<br/>Detailed Jenkins log info: {}".format(jenkins_log_url)
 
         return html_content
