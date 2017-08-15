@@ -226,9 +226,9 @@ class WebCrawler(object):
         if url_host in self.link_special_host:
             url_query = parsed_object.query
             if url_query != '':
-                connect_string = '?' 
+                connect_string = '&' 
             else:
-                connect_string = '&'
+                connect_string = '?'
             url = url + connect_string + self.link_params
 
         exception_str = ""
