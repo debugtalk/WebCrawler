@@ -7,3 +7,7 @@ dist/*
 *.egg-info
 .python-version
 logs/
+
+#eclipse project files
+.project
+.pydevproject
