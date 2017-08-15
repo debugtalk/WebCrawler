@@ -95,6 +95,10 @@ class WebCrawler(object):
         headers = config_dict.get('headers', {})
         self.user_agent = headers.get('User-Agent', {})
 
+        special_configs = config_dict.get('special', {})
+        self.link_special_host = special_configs.get('host', [])
+        self.link_params = special_configs.get('params')
+
         self.kwargs['timeout'] = config_dict.get('default_timeout', 20)
 
         whitelist_configs = config_dict.get('whitelist', {})
@@ -219,6 +223,13 @@ class WebCrawler(object):
             return set()
         if url_host in self.auth_dict and self.auth_dict[url_host]:
             kwargs['auth'] = self.auth_dict[url_host]
+        if url_host in self.link_special_host:
+            url_query = parsed_object.query
+            if url_query != '':
+                connect_string = '?' 
+            else:
+                connect_string = '&'
+            url = url + connect_string + self.link_params
 
         exception_str = ""
         status_code = '0'
@@ -355,7 +366,6 @@ class WebCrawler(object):
                     output += url
                     if not str(status_code).isdigit():
                         output += ", {}: {}".format(status_code, self.bad_urls_mapping[url])
-                        pass
                     if show_referer:
                         # only show 5 referers if referer urls number is greater than 5
                         referer_urls = self.get_referer_urls_set(url)

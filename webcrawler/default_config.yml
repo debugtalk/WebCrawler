@@ -28,6 +28,13 @@ headers:
 
 default_timeout: 20
 
+#Special handling required
+special:
+    host:
+         - coupon.dji.com
+         - enterprise.dji.com
+    params: 'www=v2'
+
 whitelist:
     host:
         - www.linkedin.com
