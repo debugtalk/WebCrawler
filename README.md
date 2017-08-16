@@ -31,7 +31,7 @@ $ webcrawler -V
 
 ```text
 $ webcrawler -h
-usage: main.py [-h] [-V] [--log-level LOG_LEVEL] [--config-file CONFIG_FILE]
+usage: webcrawler [-h] [-V] [--log-level LOG_LEVEL] [--config-file CONFIG_FILE]
                [--seeds SEEDS] [--include-hosts INCLUDE_HOSTS]
                [--cookies COOKIES] [--crawl-mode CRAWL_MODE]
                [--max-depth MAX_DEPTH] [--concurrency CONCURRENCY]
