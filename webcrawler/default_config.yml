@@ -27,31 +27,3 @@ headers:
         mobile: 'Mozilla/5.0 (iPhone; CPU iPhone OS 9_1 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Version/9.0 Mobile/13B143 Safari/601.1'
 
 default_timeout: 20
-
-whitelist:
-    host:
-        - www.linkedin.com
-        - www.miibeian.gov.cn
-        - skypixel-usa.oss-us-west-1.aliyuncs.com
-        - www.instagram.com
-        - instagram.com
-        - facebook.com
-        - www.youtube.com
-        - fonts.googleapis.com
-        - twitter.com
-        - www.apple.com
-    fullurl:
-        - https://cdn.ampproject.org
-        - https://link.dji.com/u/nprefill.js
-    startswith:
-        - '#' # locator, e.g. #overview
-        - 'javascript' # javascript:void(0);
-        - 'mailto' # mailto:buyenterprise@debugtalk.com
-        - 'tel:' # tel:00852+12345678
-        - 'data:' # data:image/png;base64,iVBORw
-        - 'whatsapp://' # whatsapp://send?text=https://store.XXX
-        - 'https://store.dji.com/guides/?from=djistorepage'
-    include-key:
-        - xmlrpc.php
-        - .link
-        - .url
