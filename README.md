@@ -24,28 +24,30 @@ To ensure the installation or upgrade is successful, you can execute command `we
 
 ```bash
 $ webcrawler -V
-0.3.0
+jenkins-mail-py version: 0.2.4
+WebCrawler version: 0.3.0
 ```
 
 ## Usage
 
 ```text
 $ webcrawler -h
-usage: webcrawler [-h] [-V] [--log-level LOG_LEVEL] [--config-file CONFIG_FILE]
-               [--seeds SEEDS] [--include-hosts INCLUDE_HOSTS]
-               [--cookies COOKIES] [--crawl-mode CRAWL_MODE]
-               [--max-depth MAX_DEPTH] [--concurrency CONCURRENCY]
-               [--save-results SAVE_RESULTS]
-               [--grey-user-agent GREY_USER_AGENT]
-               [--grey-traceid GREY_TRACEID] [--grey-view-grey GREY_VIEW_GREY]
-               [--mailgun-api-id MAILGUN_API_ID]
-               [--mailgun-api-key MAILGUN_API_KEY]
-               [--email-sender EMAIL_SENDER]
-               [--email-recepients [EMAIL_RECEPIENTS [EMAIL_RECEPIENTS ...]]]
-               [--mail-subject MAIL_SUBJECT] [--mail-content MAIL_CONTENT]
-               [--jenkins-job-name JENKINS_JOB_NAME]
-               [--jenkins-job-url JENKINS_JOB_URL]
-               [--jenkins-build-number JENKINS_BUILD_NUMBER]
+usage: webcrawler [-h] [-V] [--log-level LOG_LEVEL]
+                  [--config-file CONFIG_FILE] [--seeds SEEDS]
+                  [--include-hosts INCLUDE_HOSTS] [--cookies COOKIES]
+                  [--crawl-mode CRAWL_MODE] [--max-depth MAX_DEPTH]
+                  [--concurrency CONCURRENCY] [--save-results SAVE_RESULTS]
+                  [--grey-user-agent GREY_USER_AGENT]
+                  [--grey-traceid GREY_TRACEID]
+                  [--grey-view-grey GREY_VIEW_GREY]
+                  [--mailgun-api-id MAILGUN_API_ID]
+                  [--mailgun-api-key MAILGUN_API_KEY]
+                  [--mail-sender MAIL_SENDER]
+                  [--mail-recepients [MAIL_RECEPIENTS [MAIL_RECEPIENTS ...]]]
+                  [--mail-subject MAIL_SUBJECT] [--mail-content MAIL_CONTENT]
+                  [--jenkins-job-name JENKINS_JOB_NAME]
+                  [--jenkins-job-url JENKINS_JOB_URL]
+                  [--jenkins-build-number JENKINS_BUILD_NUMBER]
 
 A web crawler for testing website links validation.
 
@@ -81,9 +83,9 @@ optional arguments:
                         Specify mailgun api id.
   --mailgun-api-key MAILGUN_API_KEY
                         Specify mailgun api key.
-  --email-sender EMAIL_SENDER
+  --mail-sender MAIL_SENDER
                         Specify email sender.
-  --email-recepients [EMAIL_RECEPIENTS [EMAIL_RECEPIENTS ...]]
+  --mail-recepients [MAIL_RECEPIENTS [MAIL_RECEPIENTS ...]]
                         Specify email recepients.
   --mail-subject MAIL_SUBJECT
                         Specify email subject.
