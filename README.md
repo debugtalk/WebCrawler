@@ -17,34 +17,35 @@ A simple web crawler, mainly targets for link validation test.
 ## Installation/Upgrade
 
 ```bash
-$ pip install -U git+https://github.com/debugtalk/WebCrawler.git#egg=WebCrawler
+$ pip install -U git+https://github.com/debugtalk/WebCrawler.git#egg=WebCrawler --process-dependency-links
 ```
 
-To ensure the installation or upgrade is successful, you can execute command `ate -V` to see if you can get the correct version number.
+To ensure the installation or upgrade is successful, you can execute command `webcrawler -V` to see if you can get the correct version number.
 
 ```bash
 $ webcrawler -V
-0.2.1
+0.2.3
 ```
 
 ## Usage
 
 ```text
 $ webcrawler -h
-# same as:
-$ python main.py -h
 usage: main.py [-h] [-V] [--log-level LOG_LEVEL] [--config-file CONFIG_FILE]
                [--seeds SEEDS] [--include-hosts INCLUDE_HOSTS]
                [--cookies COOKIES] [--crawl-mode CRAWL_MODE]
                [--max-depth MAX_DEPTH] [--concurrency CONCURRENCY]
-               [--job-url JOB_URL] [--build-number BUILD_NUMBER]
-               [--save-results] [--not-save-results]
+               [--save-results SAVE_RESULTS]
                [--grey-user-agent GREY_USER_AGENT]
                [--grey-traceid GREY_TRACEID] [--grey-view-grey GREY_VIEW_GREY]
                [--mailgun-api-id MAILGUN_API_ID]
                [--mailgun-api-key MAILGUN_API_KEY]
                [--email-sender EMAIL_SENDER]
-               [--email-recepients EMAIL_RECEPIENTS]
+               [--email-recepients [EMAIL_RECEPIENTS [EMAIL_RECEPIENTS ...]]]
+               [--mail-subject MAIL_SUBJECT] [--mail-content MAIL_CONTENT]
+               [--jenkins-job-name JENKINS_JOB_NAME]
+               [--jenkins-job-url JENKINS_JOB_URL]
+               [--jenkins-build-number JENKINS_BUILD_NUMBER]
 
 A web crawler for testing website links validation.
 
@@ -68,11 +69,8 @@ optional arguments:
                         Specify max crawl depth.
   --concurrency CONCURRENCY
                         Specify concurrent workers number.
-  --job-url JOB_URL     Specify jenkins job url.
-  --build-number BUILD_NUMBER
-                        Specify jenkins build number.
-  --save-results
-  --not-save-results
+  --save-results SAVE_RESULTS
+                        Specify if save results, default is NO.
   --grey-user-agent GREY_USER_AGENT
                         Specify grey environment header User-Agent.
   --grey-traceid GREY_TRACEID
@@ -85,8 +83,18 @@ optional arguments:
                         Specify mailgun api key.
   --email-sender EMAIL_SENDER
                         Specify email sender.
-  --email-recepients EMAIL_RECEPIENTS
+  --email-recepients [EMAIL_RECEPIENTS [EMAIL_RECEPIENTS ...]]
                         Specify email recepients.
+  --mail-subject MAIL_SUBJECT
+                        Specify email subject.
+  --mail-content MAIL_CONTENT
+                        Specify email content.
+  --jenkins-job-name JENKINS_JOB_NAME
+                        Specify jenkins job name.
+  --jenkins-job-url JENKINS_JOB_URL
+                        Specify jenkins job url.
+  --jenkins-build-number JENKINS_BUILD_NUMBER
+                        Specify jenkins build number.
 ```
 
 ## Examples
@@ -118,13 +126,13 @@ $ webcrawler --seeds http://debugtalk.com,http://blog.debugtalk.com --crawl-mode
 Crawl with different cookies.
 
 ```text
-$ python main.py --seeds http://debugtalk.com --crawl-mode BFS --max-depth 10 --concurrency 50 --cookies 'lang:en,country:us|lang:zh,country:cn'
+$ webcrawler --seeds http://debugtalk.com --crawl-mode BFS --max-depth 10 --concurrency 50 --cookies 'lang:en,country:us|lang:zh,country:cn'
 ```
-
-## License
-
-Open source licensed under the MIT license (see LICENSE file for details).
 
 ## Supported Python Versions
 
 WebCrawler supports Python 2.7, 3.3, 3.4, 3.5, and 3.6.
+
+## License
+
+Open source licensed under the MIT license (see LICENSE file for details).

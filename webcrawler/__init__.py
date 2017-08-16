@@ -1,11 +1,10 @@
-__version__ = '0.2.2'
+__version__ = '0.2.3'
 
 import os
 import sys
 import logging
 import argparse
 from .core import WebCrawler
-from jenkins_mail_py import MailgunHelper
 from .helpers import color_logging
 
 def main():
@@ -38,9 +37,8 @@ def main():
     parser.add_argument(
         '--concurrency', help="Specify concurrent workers number.")
 
-    parser.add_argument('--save-results', dest='save_results', action='store_true')
-    parser.add_argument('--not-save-results', dest='save_results', action='store_false')
-    parser.set_defaults(save_results=False)
+    parser.add_argument(
+        '--save-results', default='NO', help="Specify if save results, default is NO.")
 
     parser.add_argument("--grey-user-agent",
                         help="Specify grey environment header User-Agent.")
@@ -49,7 +47,12 @@ def main():
     parser.add_argument("--grey-view-grey",
                         help="Specify grey environment cookie view_gray.")
 
-    mailer = MailgunHelper(parser)
+    try:
+        from jenkins_mail_py import MailgunHelper
+        mailer = MailgunHelper(parser)
+    except ImportError:
+        mailer = None
+
     args = parser.parse_args()
 
     if args.version:
@@ -100,4 +103,5 @@ def main_crawler(args, mailer=None):
         canceled = True
         color_logging("Canceling...", color='red')
     finally:
-        web_crawler.print_result(canceled, save_visited_urls=args.save_results)
+        save_results = False if args.save_results.upper() == "NO" else True
+        web_crawler.print_result(canceled, save_results)

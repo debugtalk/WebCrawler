@@ -453,13 +453,13 @@ class WebCrawler(object):
 
         color_logging('=' * 120, color='yellow')
 
-    def print_result(self, canceled=False, save_visited_urls=False):
+    def print_result(self, canceled=False, save_results=False):
         status = "Canceled" if canceled else "Finished"
         color_logging("{}. The crawler has tested {} urls."\
             .format(status, self.url_queue.get_visited_urls_count()))
         self.print_categorised_urls()
 
-        if save_visited_urls:
+        if save_results:
             urls_mapping_log_path = os.path.join(self.logs_folder, 'urls_mapping.yml')
             helpers.save_to_yaml(self.web_urls_mapping, urls_mapping_log_path)
             color_logging("Save urls mapping in YAML file: {}".format(urls_mapping_log_path))
