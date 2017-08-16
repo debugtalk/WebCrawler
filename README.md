@@ -24,7 +24,7 @@ To ensure the installation or upgrade is successful, you can execute command `we
 
 ```bash
 $ webcrawler -V
-0.2.3
+0.3.0
 ```
 
 ## Usage

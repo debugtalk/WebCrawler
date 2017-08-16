@@ -467,18 +467,23 @@ class WebCrawler(object):
             helpers.save_to_yaml(self.url_queue.get_visited_urls(), visited_urls_log_path)
             color_logging("Save visited urls in YAML file: {}".format(visited_urls_log_path))
 
-    def gen_mail_html_content(self):
+    def get_mail_content_ordered_dict(self):
         website_urls = [website['url'] for website in self.website_list]
-        html_content = "Tested websites: {}<br/>".format(','.join(website_urls))
-        html_content += "Total tested urls number: {}<br/><br/>"\
-            .format(self.url_queue.get_visited_urls_count())
-        html_content += "Categorised urls number by HTTP Status Code: <br/>"
+        mail_content_ordered_dict = OrderedDict({
+            "Tested websites": ','.join(website_urls),
+            "Total tested urls number": self.url_queue.get_visited_urls_count(),
+            "===== Detailed": "Statistics ====="
+        })
+
+        flag_code = 0
+
         for status_code, urls_list in self.get_sorted_categorised_urls():
             if status_code.isdigit():
-                html_content += "status code {}: {}".format(status_code, len(urls_list))
+                mail_content_ordered_dict["status code {}".format(status_code)] = len(urls_list)
+                if int(status_code) > 400:
+                    flag_code = 1
             else:
-                html_content += "{} urls: {}".format(status_code, len(urls_list))
+                mail_content_ordered_dict[status_code] = len(urls_list)
+                flag_code = 1
 
-            html_content += "<br/>"
-
-        return html_content
+        return mail_content_ordered_dict, flag_code

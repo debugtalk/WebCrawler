@@ -1,4 +1,4 @@
-__version__ = '0.2.3'
+__version__ = '0.3.0'
 
 import os
 import sys
@@ -97,8 +97,8 @@ def main_crawler(args, mailer=None):
 
         if mailer and mailer.config_ready:
             subject = "%s" % args.seeds
-            content = web_crawler.gen_mail_html_content()
-            mailer.send_mail(subject, content=content)
+            mail_content_ordered_dict, flag_code = web_crawler.get_mail_content_ordered_dict()
+            mailer.send_mail(subject, mail_content_ordered_dict, flag_code)
     except KeyboardInterrupt:
         canceled = True
         color_logging("Canceling...", color='red')
