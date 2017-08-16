@@ -33,7 +33,7 @@ setup(
         'jenkins-mail-py'
     ],
     dependency_links=[
-        "git+https://github.com/debugtalk/jenkins-mail-py.git#egg=jenkins-mail-py"
+        "git+https://github.com/debugtalk/jenkins-mail-py.git#egg=jenkins-mail-py-0"
     ],
     classifiers=[
         'Programming Language :: Python :: 2.7',
