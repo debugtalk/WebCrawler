@@ -77,10 +77,6 @@ class WebCrawler(object):
             self.url_queue.add_unvisited_url(website_url)
 
     def load_config(self, config_file):
-        self.kwargs = {
-            'headers': {},
-            'cookies': {}
-        }
 
         if config_file:
             if not os.path.isabs(config_file):
@@ -90,11 +86,13 @@ class WebCrawler(object):
 
         config_dict = helpers.load_yaml_file(config_file)
 
+        self.kwargs = {
+            'headers': config_dict.get('headers', {}),
+            'cookies': {}
+        }
+
         self.url_type_config = config_dict.get('Content-Type', {})
-
-        headers = config_dict.get('headers', {})
-        self.user_agent = headers.get('User-Agent', {})
-
+        self.user_agent = self.kwargs["headers"].get('User-Agent', {})
         self.kwargs['timeout'] = config_dict.get('default_timeout', 20)
 
         whitelist_configs = config_dict.get('whitelist', {})
