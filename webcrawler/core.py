@@ -136,18 +136,16 @@ class WebCrawler(object):
         return parsed_url
 
     def get_url_type(self, resp, req_host):
-        try:
-            content_type = resp.headers['Content-Type']
-        except KeyError:
-            url_type = 'IGNORE'
+        if req_host not in self.include_hosts_set:
+            url_type = 'external'
             return url_type
 
-        if content_type in self.url_type_config.get('static', []):
+        content_type = resp.headers.get('Content-Type', None)
+        if content_type and content_type in self.url_type_config.get('static', []):
             url_type = 'static'
-        elif req_host not in self.include_hosts_set:
-            url_type = 'external'
         else:
             url_type = 'recursive'
+
         return url_type
 
     def parse_urls(self, urls_set, referer_url):
@@ -234,10 +232,6 @@ class WebCrawler(object):
                     resp = requests.get(url, **kwargs)
                 duration_time = time.time() - start_time
                 status_code = str(resp.status_code)
-            elif url_type == 'IGNORE':
-                duration_time = time.time() - start_time
-                status_code = str(resp.status_code)
-                retry_times = 0
             else:
                 # recursive
                 start_time = time.time()
