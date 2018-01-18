@@ -225,7 +225,7 @@ class WebCrawler(object):
             resp = requests.head(url, **kwargs)
             url_type = self.get_url_type(resp, url_host)
             if url_type in ['static', 'external']:
-                if resp.status_code in [301, 302, 404]:
+                if resp.status_code in [301, 302, 404, 500]:
                     # some links can not be visited with HEAD method and will return 404 status code
                     # so we recheck with GET method here.
                     start_time = time.time()
