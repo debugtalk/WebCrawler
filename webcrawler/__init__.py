@@ -7,6 +7,14 @@ import argparse
 from .core import WebCrawler
 from .helpers import color_logging
 
+# Sanity checking.
+try:
+    assert sys.version_info.major == 3
+    assert sys.version_info.minor > 5
+except AssertionError:
+    raise RuntimeError('Requests-HTML requires Python 3.6+!')
+
+
 def main():
     """ parse command line options and run commands.
     """
