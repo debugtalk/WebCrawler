@@ -4,6 +4,7 @@ A simple web crawler, mainly targets for link validation test.
 
 ## Features
 
+- based on [requests-html][requests-html], **full JavaScript support!**
 - running in BFS or DFS mode
 - specify concurrent running workers in BFS mode
 - crawl seeds can be set to more than one urls
@@ -12,13 +13,14 @@ A simple web crawler, mainly targets for link validation test.
 - group visited urls by HTTP status code
 - flexible configuration in YAML
 - send test result by mail, through SMTP protocol or mailgun service
-- cancel jobs
 
 ## Installation/Upgrade
 
 ```bash
 $ pip install -U git+https://github.com/debugtalk/WebCrawler.git#egg=WebCrawler --process-dependency-links
 ```
+
+Only **Python 3.6** is supported.
 
 To ensure the installation or upgrade is successful, you can execute command `webcrawler -V` to see if you can get the correct version number.
 
@@ -131,10 +133,4 @@ Crawl with different cookies.
 $ webcrawler --seeds http://debugtalk.com --crawl-mode BFS --max-depth 10 --concurrency 50 --cookies 'lang:en,country:us|lang:zh,country:cn'
 ```
 
-## Supported Python Versions
-
-WebCrawler supports Python 2.7, 3.3, 3.4, 3.5, and 3.6.
-
-## License
-
-Open source licensed under the MIT license (see LICENSE file for details).
+[requests-html]: https://github.com/kennethreitz/requests-html
