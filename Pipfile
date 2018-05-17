@@ -1,0 +1,15 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+requests-html = "*"
+pyyaml = "*"
+termcolor = "*"
+jenkins-mail-py = {git = "https://github.com/debugtalk/jenkins-mail-py.git"}
+
+[dev-packages]
+
+[requires]
+python_version = "3.6"
