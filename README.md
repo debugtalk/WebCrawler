@@ -12,12 +12,11 @@ A simple web crawler, mainly targets for link validation test.
 - configure hyper links regex, including match type and ignore type
 - group visited urls by HTTP status code
 - flexible configuration in YAML
-- send test result by mail, through SMTP protocol or mailgun service
 
 ## Installation/Upgrade
 
 ```bash
-$ pip install -U git+https://github.com/debugtalk/WebCrawler.git#egg=WebCrawler --process-dependency-links
+$ pip install -U git+https://github.com/debugtalk/WebCrawler.git#egg=WebCrawler
 ```
 
 Only **Python 3.6** is supported.
@@ -26,7 +25,6 @@ To ensure the installation or upgrade is successful, you can execute command `we
 
 ```bash
 $ webcrawler -V
-jenkins-mail-py version: 0.2.4
 WebCrawler version: 0.3.0
 ```
 
@@ -34,22 +32,13 @@ WebCrawler version: 0.3.0
 
 ```text
 $ webcrawler -h
-usage: webcrawler [-h] [-V] [--log-level LOG_LEVEL]
-                  [--config-file CONFIG_FILE] [--seeds SEEDS]
-                  [--include-hosts INCLUDE_HOSTS] [--cookies COOKIES]
-                  [--crawl-mode CRAWL_MODE] [--max-depth MAX_DEPTH]
-                  [--concurrency CONCURRENCY] [--save-results SAVE_RESULTS]
-                  [--grey-user-agent GREY_USER_AGENT]
-                  [--grey-traceid GREY_TRACEID]
-                  [--grey-view-grey GREY_VIEW_GREY]
-                  [--mailgun-api-id MAILGUN_API_ID]
-                  [--mailgun-api-key MAILGUN_API_KEY]
-                  [--mail-sender MAIL_SENDER]
-                  [--mail-recepients [MAIL_RECEPIENTS [MAIL_RECEPIENTS ...]]]
-                  [--mail-subject MAIL_SUBJECT] [--mail-content MAIL_CONTENT]
-                  [--jenkins-job-name JENKINS_JOB_NAME]
-                  [--jenkins-job-url JENKINS_JOB_URL]
-                  [--jenkins-build-number JENKINS_BUILD_NUMBER]
+usage: main.py [-h] [-V] [--log-level LOG_LEVEL] [--config-file CONFIG_FILE]
+               [--seeds SEEDS] [--include-hosts INCLUDE_HOSTS]
+               [--cookies COOKIES] [--crawl-mode CRAWL_MODE]
+               [--max-depth MAX_DEPTH] [--concurrency CONCURRENCY]
+               [--save-results SAVE_RESULTS]
+               [--grey-user-agent GREY_USER_AGENT]
+               [--grey-traceid GREY_TRACEID] [--grey-view-grey GREY_VIEW_GREY]
 
 A web crawler for testing website links validation.
 
@@ -81,24 +70,6 @@ optional arguments:
                         Specify grey environment cookie traceid.
   --grey-view-grey GREY_VIEW_GREY
                         Specify grey environment cookie view_gray.
-  --mailgun-api-id MAILGUN_API_ID
-                        Specify mailgun api id.
-  --mailgun-api-key MAILGUN_API_KEY
-                        Specify mailgun api key.
-  --mail-sender MAIL_SENDER
-                        Specify email sender.
-  --mail-recepients [MAIL_RECEPIENTS [MAIL_RECEPIENTS ...]]
-                        Specify email recepients.
-  --mail-subject MAIL_SUBJECT
-                        Specify email subject.
-  --mail-content MAIL_CONTENT
-                        Specify email content.
-  --jenkins-job-name JENKINS_JOB_NAME
-                        Specify jenkins job name.
-  --jenkins-job-url JENKINS_JOB_URL
-                        Specify jenkins job url.
-  --jenkins-build-number JENKINS_BUILD_NUMBER
-                        Specify jenkins build number.
 ```
 
 ## Examples

@@ -55,12 +55,6 @@ def main():
     parser.add_argument("--grey-view-grey",
                         help="Specify grey environment cookie view_gray.")
 
-    try:
-        from jenkins_mail_py import MailgunHelper
-        mailer = MailgunHelper(parser)
-    except ImportError:
-        mailer = None
-
     args = parser.parse_args()
 
     if args.version:
@@ -71,9 +65,9 @@ def main():
     logging.basicConfig(level=log_level)
     color_logging("args: %s" % args)
 
-    main_crawler(args, mailer)
+    main_crawler(args)
 
-def main_crawler(args, mailer=None):
+def main_crawler(args):
     include_hosts = args.include_hosts.split(',') if args.include_hosts else []
     cookies_list = args.cookies.split('|') if args.cookies else ['']
     jenkins_build_number = args.jenkins_build_number
@@ -103,10 +97,6 @@ def main_crawler(args, mailer=None):
                 args.concurrency
             )
 
-        if mailer and mailer.config_ready:
-            subject = "%s" % args.seeds
-            mail_content_ordered_dict, flag_code = web_crawler.get_mail_content_ordered_dict()
-            mailer.send_mail(subject, mail_content_ordered_dict, flag_code)
     except KeyboardInterrupt:
         canceled = True
         color_logging("Canceling...", color='red')

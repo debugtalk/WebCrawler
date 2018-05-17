@@ -7,7 +7,6 @@ name = "pypi"
 requests-html = "*"
 pyyaml = "*"
 termcolor = "*"
-jenkins-mail-py = {git = "https://github.com/debugtalk/jenkins-mail-py.git"}
 
 [dev-packages]
 

@@ -26,18 +26,11 @@ setup(
     keywords='diff compare',
     install_requires=[
         'termcolor',
-        'PyYAML',
-        'future',
-        'lxml',
-        'requests',
-        'jenkins-mail-py'
-    ],
-    dependency_links=[
-        "git+https://github.com/debugtalk/jenkins-mail-py.git#egg=jenkins-mail-py-0"
+        'pyyaml',
+        'requests-html'
     ],
     classifiers=[
-        'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.6'
     ],
     entry_points={
         'console_scripts': [
