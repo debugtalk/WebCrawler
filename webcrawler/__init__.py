@@ -44,16 +44,10 @@ def main():
         '--max-depth', default=5, type=int, help="Specify max crawl depth.")
     parser.add_argument(
         '--concurrency', help="Specify concurrent workers number.")
+    parser.add_argument("--grey-env", help="Specify grey environment headers and cookies.")
 
     parser.add_argument(
         '--save-results', default='NO', help="Specify if save results, default is NO.")
-
-    parser.add_argument("--grey-user-agent",
-                        help="Specify grey environment header User-Agent.")
-    parser.add_argument("--grey-traceid",
-                        help="Specify grey environment cookie traceid.")
-    parser.add_argument("--grey-view-grey",
-                        help="Specify grey environment cookie view_gray.")
 
     args = parser.parse_args()
 
@@ -70,14 +64,13 @@ def main():
 def main_crawler(args):
     include_hosts = args.include_hosts.split(',') if args.include_hosts else []
     cookies_list = args.cookies.split('|') if args.cookies else ['']
-    jenkins_build_number = args.jenkins_build_number
-    logs_folder = os.path.join(os.getcwd(), "logs", '{}'.format(jenkins_build_number))
+    logs_folder = os.path.join(os.getcwd(), "logs")
 
     web_crawler = WebCrawler(args.seeds, include_hosts, logs_folder, args.config_file)
 
     # set grey environment
-    if args.grey_user_agent and args.grey_traceid and args.grey_view_grey:
-        web_crawler.set_grey_env(args.grey_user_agent, args.grey_traceid, args.grey_view_grey)
+    if args.grey_env:
+        web_crawler.set_grey_env(args.grey_env)
 
     canceled = False
     try:

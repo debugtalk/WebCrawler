@@ -1,17 +1,20 @@
+import copy
+import json
+import multiprocessing
 import os
-import time
 import queue
 import re
+import sys
 import threading
-import copy
+import time
 from collections import OrderedDict
-import requests
-import lxml.html
-import multiprocessing
 
+import lxml.html
+import requests
+
+from . import helpers
 from .helpers import color_logging
 from .url_queue import UrlQueue
-from . import helpers
 
 
 def parse_seeds(seeds):
@@ -101,14 +104,17 @@ class WebCrawler(object):
         self.whitelist_include_keys = whitelist_configs.get('include-key', [])
         self.whitelist_startswith_strs = whitelist_configs.get('startswith', [])
 
-        self.grey_env = False
+        self.is_grey_env = False
 
-    def set_grey_env(self, user_agent, traceid, view_grey):
-        self.kwargs['headers']['User-Agent'] = user_agent
-        self.kwargs['cookies']['traceid'] = traceid
-        self.kwargs['cookies']['view_grey'] = view_grey
-        self.grey_env = True
-        self.grey_user_agent = user_agent
+    def set_grey_env(self, grey_env):
+        try:
+            grey_env_kwargs = json.loads(grey_env)
+        except json.decoder.JSONDecodeError:
+            color_logging("invalid grey env: {}".format(grey_env), color='red')
+            sys.exit(1)
+
+        self.kwargs.update(grey_env_kwargs)
+        self.is_grey_env = True
 
     def get_user_agent_by_url(self, url):
         if '//m.' in url:
@@ -205,7 +211,7 @@ class WebCrawler(object):
 
         hyper_links_set = set()
         kwargs = copy.deepcopy(self.kwargs)
-        if not self.grey_env:
+        if not self.is_grey_env:
             kwargs['headers']['User-Agent'] = self.get_user_agent_by_url(url)
         parsed_object = helpers.get_parsed_object_from_url(url)
         url_host = parsed_object.netloc

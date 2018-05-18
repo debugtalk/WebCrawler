@@ -16,7 +16,7 @@ A simple web crawler, mainly targets for link validation test.
 ## Installation/Upgrade
 
 ```bash
-$ pip install -U git+https://github.com/debugtalk/WebCrawler.git#egg=WebCrawler
+$ pip install -U git+https://github.com/debugtalk/WebCrawler.git
 ```
 
 Only **Python 3.6** is supported.
@@ -36,9 +36,7 @@ usage: main.py [-h] [-V] [--log-level LOG_LEVEL] [--config-file CONFIG_FILE]
                [--seeds SEEDS] [--include-hosts INCLUDE_HOSTS]
                [--cookies COOKIES] [--crawl-mode CRAWL_MODE]
                [--max-depth MAX_DEPTH] [--concurrency CONCURRENCY]
-               [--save-results SAVE_RESULTS]
-               [--grey-user-agent GREY_USER_AGENT]
-               [--grey-traceid GREY_TRACEID] [--grey-view-grey GREY_VIEW_GREY]
+               [--grey-env GREY_ENV] [--save-results SAVE_RESULTS]
 
 A web crawler for testing website links validation.
 
@@ -62,14 +60,9 @@ optional arguments:
                         Specify max crawl depth.
   --concurrency CONCURRENCY
                         Specify concurrent workers number.
+  --grey-env GREY_ENV   Specify grey environment headers and cookies.
   --save-results SAVE_RESULTS
                         Specify if save results, default is NO.
-  --grey-user-agent GREY_USER_AGENT
-                        Specify grey environment header User-Agent.
-  --grey-traceid GREY_TRACEID
-                        Specify grey environment cookie traceid.
-  --grey-view-grey GREY_VIEW_GREY
-                        Specify grey environment cookie view_gray.
 ```
 
 ## Examples
