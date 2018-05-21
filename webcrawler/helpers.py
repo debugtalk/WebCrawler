@@ -94,16 +94,16 @@ def color_logging(text, log_level='info', color=None):
     log_level = log_level.upper()
     if log_level == 'DEBUG':
         color = color or 'blue'
-        logging.info(colored(text, color))
+        logging.debug(colored(text, color))
     elif log_level == 'INFO':
         color = color or 'green'
         logging.info(colored(text, color, attrs=['bold']))
     elif log_level == 'WARNING':
         color = color or 'yellow'
-        logging.info(colored(text, color, attrs=['bold']))
+        logging.warning(colored(text, color, attrs=['bold']))
     elif log_level == 'ERROR':
         color = color or 'red'
-        logging.info(colored(text, color, attrs=['bold']))
+        logging.error(colored(text, color, attrs=['bold']))
 
 def load_json_file(json_file):
     with open(json_file, 'r') as f:
