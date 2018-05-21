@@ -30,7 +30,7 @@ def main():
     parser.add_argument(
         '--config-file', help="Specify config file path.")
     parser.add_argument(
-        '--seeds', default='http://debugtalk.com',
+        '--seeds',
         help="Specify crawl seed url(s), several urls can be specified with pipe; \
               if auth needed, seeds can be specified like user1:pwd1@url1|user2:pwd2@url2")
     parser.add_argument(
@@ -62,6 +62,11 @@ def main():
     main_crawler(args)
 
 def main_crawler(args):
+
+    if not args.seeds:
+        color_logging("crawl seeds not specified!", "ERROR")
+        exit(0)
+
     include_hosts = args.include_hosts.split(',') if args.include_hosts else []
     cookies_list = args.cookies.split('|') if args.cookies else ['']
     logs_folder = os.path.join(os.getcwd(), "logs")
