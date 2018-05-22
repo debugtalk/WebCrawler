@@ -10,7 +10,7 @@ import time
 from collections import OrderedDict
 
 import lxml.html
-import requests
+from requests import Session, adapters, exceptions
 
 from . import helpers
 from .helpers import color_logging
@@ -68,6 +68,7 @@ class WebCrawler(object):
         self.web_urls_mapping = {}
         self.bad_urls_mapping = {}
         self.current_depth_unvisited_urls_queue = queue.Queue()
+        self.session = Session()
 
     def reset_all(self):
         self.current_depth = 0
@@ -196,7 +197,7 @@ class WebCrawler(object):
         self.test_counter += 1
         color_logging(
             "test_counter: {}, depth: {}, url: {}, cookie: {}, status_code: {}, duration_time: {}s"
-            .format(self.test_counter, depth, url, self.cookie_str, status_code, round(duration_time, 3)), 'DEBUG')
+            .format(self.test_counter, depth, url, self.cookie_str, status_code, round(duration_time, 3)), 'INFO')
 
     def is_url_has_whitelist_key(self, url):
         for key in self.whitelist_include_keys:
@@ -228,20 +229,20 @@ class WebCrawler(object):
         duration_time = 0
         try:
             start_time = time.time()
-            resp = requests.head(url, **kwargs)
+            resp = self.session.head(url, **kwargs)
             url_type = self.get_url_type(resp, url_host)
             if url_type in ['static', 'external']:
                 if resp.status_code in [301, 302, 404, 500]:
                     # some links can not be visited with HEAD method and will return 404 status code
                     # so we recheck with GET method here.
                     start_time = time.time()
-                    resp = requests.get(url, **kwargs)
+                    resp = self.session.get(url, **kwargs)
                 duration_time = time.time() - start_time
                 status_code = str(resp.status_code)
             else:
                 # recursive
                 start_time = time.time()
-                resp = requests.get(url, **kwargs)
+                resp = self.session.get(url, **kwargs)
                 duration_time = time.time() - start_time
                 resp_content_md5 = helpers.get_md5(resp.content)
                 hyper_links_set = self.parse_page_links(resp.url, resp.content)
@@ -251,31 +252,31 @@ class WebCrawler(object):
                 self.url_queue.add_unvisited_urls(hyper_links_set)
                 if resp.status_code > 400:
                     exception_str = 'HTTP Status Code is {}.'.format(status_code)
-        except requests.exceptions.SSLError as ex:
+        except exceptions.SSLError as ex:
             color_logging("{}: {}".format(url, str(ex)), 'WARNING')
             exception_str = str(ex)
             status_code = 'SSLError'
             retry_times = 0
-        except requests.exceptions.ConnectionError as ex:
+        except exceptions.ConnectionError as ex:
             color_logging("ConnectionError {}: {}".format(url, str(ex)), 'WARNING')
             exception_str = str(ex)
             status_code = 'ConnectionError'
-        except requests.exceptions.Timeout:
+        except exceptions.Timeout:
             time_out = kwargs['timeout']
             color_logging("Timeout {}: Timed out for {} seconds".format(url, time_out), 'WARNING')
             exception_str = "Timed out for {} seconds".format(time_out)
             status_code = 'Timeout'
-        except requests.exceptions.InvalidSchema as ex:
+        except exceptions.InvalidSchema as ex:
             color_logging("{}: {}".format(url, str(ex)), 'WARNING')
             exception_str = str(ex)
             status_code = 'InvalidSchema'
             retry_times = 0
-        except requests.exceptions.ChunkedEncodingError as ex:
+        except exceptions.ChunkedEncodingError as ex:
             color_logging("{}: {}".format(url, str(ex)), 'WARNING')
             exception_str = str(ex)
             status_code = 'ChunkedEncodingError'
             retry_times = 0
-        except requests.exceptions.InvalidURL as ex:
+        except exceptions.InvalidURL as ex:
             color_logging("{}: {}".format(url, str(ex)), 'WARNING')
             exception_str = str(ex)
             status_code = 'InvalidURL'
@@ -437,6 +438,13 @@ class WebCrawler(object):
             crawl_mode = 'BFS' or 'DFS'
         """
         concurrency = int(concurrency or multiprocessing.cpu_count() * 4)
+        a = adapters.HTTPAdapter(
+            pool_connections = min(concurrency * 4, 100),
+            pool_maxsize = concurrency
+        )
+        self.session.mount("http://", a)
+        self.session.mount("https://", a)
+
         info = "Start to run test in {} mode, cookies: {}, max_depth: {}, concurrency: {}"\
             .format(crawl_mode, cookies, max_depth, concurrency)
         color_logging(info)
