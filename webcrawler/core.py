@@ -9,8 +9,8 @@ import threading
 import time
 from collections import OrderedDict
 
-import lxml.html
-from requests import Session, adapters, exceptions
+from requests import adapters, exceptions
+from requests_html import HTMLSession
 
 from . import helpers
 from .helpers import color_logging
@@ -68,7 +68,7 @@ class WebCrawler(object):
         self.web_urls_mapping = {}
         self.bad_urls_mapping = {}
         self.current_depth_unvisited_urls_queue = queue.Queue()
-        self.session = Session()
+        self.session = HTMLSession()
 
     def reset_all(self):
         self.current_depth = 0
@@ -124,24 +124,6 @@ class WebCrawler(object):
         else:
             return self.user_agent['www']
 
-    def parse_url(self, url, referer_url):
-        url = url.strip()
-        if url == "":
-            return None
-
-        for ignore_url_startswith_str in self.whitelist_startswith_strs:
-            if url.startswith(ignore_url_startswith_str):
-                return None
-
-        if url.startswith('\\"'):
-            # \\"https:\\/\\/store.debugtalk.com\\/guides\\/"
-            url = url.encode('utf-8').decode('unicode_escape')\
-                .replace(r'\/', r'/').replace(r'"', r'')
-            return url
-
-        parsed_url = helpers.make_url_with_referer(url, referer_url)
-        return parsed_url
-
     def get_url_type(self, resp, req_host):
         if req_host not in self.include_hosts_set:
             url_type = 'external'
@@ -154,36 +136,6 @@ class WebCrawler(object):
             url_type = 'recursive'
 
         return url_type
-
-    def parse_urls(self, urls_set, referer_url):
-        parsed_urls_set = set()
-        for url in urls_set:
-            parsed_url = self.parse_url(url, referer_url)
-            if parsed_url is None:
-                continue
-            parsed_urls_set.add(parsed_url)
-        return parsed_urls_set
-
-    def parse_page_links(self, referer_url, content):
-        """ parse a web pages and get all hyper links.
-        """
-        raw_links_set = set()
-
-        try:
-            etree = lxml.html.fromstring(content)
-        except lxml.etree.ParserError:
-            return raw_links_set
-
-        link_elements_list = etree.xpath("//link|//a|//script|//img")
-        for link in link_elements_list:
-            url = link.get('href') or link.get('src')
-            if url is None:
-                continue
-
-            raw_links_set.add(url)
-
-        parsed_urls_set = self.parse_urls(raw_links_set, referer_url)
-        return parsed_urls_set
 
     def save_categorised_url(self, status_code, url):
         """ save url by status_code category
@@ -245,7 +197,8 @@ class WebCrawler(object):
                 resp = self.session.get(url, **kwargs)
                 duration_time = time.time() - start_time
                 resp_content_md5 = helpers.get_md5(resp.content)
-                hyper_links_set = self.parse_page_links(resp.url, resp.content)
+                # resp.html.render()
+                hyper_links_set = resp.html.absolute_links
                 if url not in self.web_urls_mapping:
                     self.web_urls_mapping[url] = list(hyper_links_set)
                 status_code = str(resp.status_code)
@@ -280,11 +233,6 @@ class WebCrawler(object):
             color_logging("{}: {}".format(url, str(ex)), 'WARNING')
             exception_str = str(ex)
             status_code = 'InvalidURL'
-            retry_times = 0
-        except lxml.etree.XMLSyntaxError as ex:
-            color_logging("{}: {}".format(url, str(ex)), 'WARNING')
-            exception_str = str(ex)
-            status_code = 'XMLSyntaxError'
             retry_times = 0
 
         self._print_log(depth, url, status_code, duration_time)
