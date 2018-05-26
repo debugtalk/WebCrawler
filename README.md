@@ -28,12 +28,11 @@ $ requests_crawler -V
 
 ```text
 $ requests_crawler -h
-usage: requests_crawler [-h] [-V] [--log-level LOG_LEVEL] [--seed SEED]
-                        [--include-hosts [INCLUDE_HOSTS [INCLUDE_HOSTS ...]]]
-                        [--exclude-hosts [EXCLUDE_HOSTS [EXCLUDE_HOSTS ...]]]
-                        [--headers [HEADERS [HEADERS ...]]]
-                        [--cookies [COOKIES [COOKIES ...]]]
-                        [--workers WORKERS]
+usage: main-debug.py [-h] [-V] [--log-level LOG_LEVEL] [--seed SEED]
+                     [--include [INCLUDE [INCLUDE ...]]]
+                     [--exclude-hosts [EXCLUDE_HOSTS [EXCLUDE_HOSTS ...]]]
+                     [--headers [HEADERS [HEADERS ...]]]
+                     [--cookies [COOKIES [COOKIES ...]]] [--workers WORKERS]
 
 A web crawler for testing website links validation, based on requests-html.
 
@@ -43,8 +42,8 @@ optional arguments:
   --log-level LOG_LEVEL
                         Specify logging level, default is INFO.
   --seed SEED           Specify crawl seed url
-  --include-hosts [INCLUDE_HOSTS [INCLUDE_HOSTS ...]]
-                        Specify extra hosts to be crawled.
+  --include [INCLUDE [INCLUDE ...]]
+                        Urls include the snippets will be crawled recursively.
   --exclude-hosts [EXCLUDE_HOSTS [EXCLUDE_HOSTS ...]]
                         Specify excluded hosts not to be crawled.
   --headers [HEADERS [HEADERS ...]]
@@ -67,6 +66,13 @@ Crawl with headers and cookies.
 ```text
 $ requests_crawler --seeds http://debugtalk.com --headers User-Agent:iOS/10.3 --cookies lang:en country:us
 ```
+
+Crawl with extra hosts, e.g. `httprunner.org` will also be crawled recursively.
+
+```text
+$ requests_crawler --seeds http://debugtalk.com --include httprunner.org
+```
+
 
 <!-- ## Logs && Report -->
 

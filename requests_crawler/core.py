@@ -47,8 +47,8 @@ class Worker(multiprocessing.Process):
 
     def get_url_type(self, url, resp):
 
-        for include_url in self.config["include_hosts"]:
-            if include_url in url:
+        for include_snippet in self.config["include"]:
+            if include_snippet in url:
                 content_type = resp.headers.get('Content-Type', None)
                 if content_type and "text/html" in content_type:
                     url_type = 'recursive'
@@ -263,9 +263,9 @@ class RequestsCrawler(object):
         self.unvisited_urls_queue.join()
         self.elapsed_time = time.time() - start_time
 
-    def start(self, seed, headers=None, cookies=None, include_hosts=None, exclude_hosts=None):
-        include_hosts = include_hosts or set()
-        include_hosts.add(seed)
+    def start(self, seed, headers=None, cookies=None, include=None, exclude_hosts=None):
+        include = include or set()
+        include.add(seed)
         exclude_hosts = exclude_hosts or set()
         kwargs = {
             'headers': headers or default_config.pc_headers,
@@ -274,7 +274,7 @@ class RequestsCrawler(object):
         }
         config = {
             "kwargs": kwargs,
-            "include_hosts": include_hosts,
+            "include": include,
             "exclude_hosts": exclude_hosts
         }
 

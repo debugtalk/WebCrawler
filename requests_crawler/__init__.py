@@ -27,7 +27,7 @@ def main():
     parser.add_argument(
         '--seed', help="Specify crawl seed url")
     parser.add_argument(
-        '--include-hosts', nargs='*', help="Specify extra hosts to be crawled.")
+        '--include', nargs='*', help="Urls include the snippets will be crawled recursively.")
     parser.add_argument(
         '--exclude-hosts', nargs='*', help="Specify excluded hosts not to be crawled.")
     parser.add_argument(
@@ -55,7 +55,7 @@ def main_crawler(args):
         color_logging("crawl seed not specified!", "ERROR")
         exit(0)
 
-    include_hosts = set(args.include_hosts or [])
+    include = set(args.include or [])
     exclude_hosts = set(args.exclude_hosts or [])
     headers_list = args.headers or []
     cookies_list = args.cookies or []
@@ -73,4 +73,4 @@ def main_crawler(args):
         cookies[key] = value
 
     web_crawler = RequestsCrawler(args.workers)
-    web_crawler.start(args.seed, headers, cookies, include_hosts, exclude_hosts)
+    web_crawler.start(args.seed, headers, cookies, include, exclude_hosts)
