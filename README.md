@@ -5,6 +5,7 @@ A simple web crawler, mainly targets for link validation test.
 ## Features
 
 - based on [requests-html][requests-html], **full JavaScript support!**
+- support rpm limitation
 - support crawl with headers and cookies
 - include & exclude mechanism
 - group visited urls by HTTP status code
@@ -22,7 +23,7 @@ To ensure the installation or upgrade is successful, you can execute command `re
 
 ```bash
 $ requests_crawler -V
-0.5.0
+0.5.2
 ```
 
 ## Usage
@@ -36,6 +37,7 @@ usage: requests_crawler [-h] [-V] [--log-level LOG_LEVEL]
                         [--headers [HEADERS [HEADERS ...]]]
                         [--cookies [COOKIES [COOKIES ...]]]
                         [--workers WORKERS]
+                        [--rpm-limit RPM_LIMIT]
 
 A web crawler for testing website links validation, based on requests-html.
 
@@ -54,6 +56,8 @@ optional arguments:
   --cookies [COOKIES [COOKIES ...]]
                         Specify cookies, e.g. 'lang=en country:us'
   --workers WORKERS     Specify concurrent workers number.
+  --rpm-limit RPM_LIMIT
+                        Specify requests limit per minute for crawler.
 ```
 
 ## Examples
@@ -80,6 +84,12 @@ Skip excluded url snippets, e.g. urls include `httprunner` will be skipped.
 
 ```text
 $ requests_crawler --seeds http://debugtalk.com --exclude httprunner
+```
+
+Crawl with rpm limitation.
+
+```text
+$ requests_crawler --seeds http://debugtalk.com --rpm-limit 30
 ```
 
 <!-- ## Logs && Report -->

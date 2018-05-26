@@ -1,4 +1,5 @@
 import logging
+import math
 import multiprocessing
 import queue
 import time
@@ -6,7 +7,9 @@ import time
 import lxml.etree
 from requests import adapters, exceptions
 from requests_html import HTMLSession, MaxRetries
+
 from termcolor import colored
+
 from . import default_config
 
 
@@ -149,8 +152,9 @@ class Worker(multiprocessing.Process):
 
 class RequestsCrawler(object):
 
-    def __init__(self, max_workers=None):
+    def __init__(self, max_workers=None, rpm_limit=None):
         self.max_workers = max_workers or multiprocessing.cpu_count()
+        self.rpm_limit = rpm_limit or math.inf
         self.unvisited_urls_queue = multiprocessing.JoinableQueue()
         self.fetched_urls_queue = multiprocessing.Queue()
         self.result_queue = multiprocessing.Queue()
@@ -254,17 +258,35 @@ class RequestsCrawler(object):
         # Enqueue jobs
         self.unvisited_urls_queue.put(seed)
 
+        start_timer = time.time()
+        requests_queued = 0
         while True:
             self.unvisited_urls_queue.join()
 
             while True:
                 try:
                     url = self.fetched_urls_queue.get(timeout=5)
-                    if url not in self.visited_urls_set:
-                        self.unvisited_urls_queue.put(url)
-                        self.visited_urls_set.add(url)
                 except queue.Empty:
                     break
+
+                # visited url will not be crawled twice
+                if url in self.visited_urls_set:
+                    continue
+
+                # limit rpm
+                if requests_queued >= self.rpm_limit:
+                    runtime_secs = time.time() - start_timer
+                    if runtime_secs < 60:
+                        sleep_secs = 60 - runtime_secs
+                        color_logging(f"exceed {self.rpm_limit} rpm limitation, sleep {sleep_secs} seconds.", "warning")
+                        time.sleep(sleep_secs)
+
+                    start_timer = time.time()
+                    requests_queued = 0
+
+                self.unvisited_urls_queue.put(url)
+                self.visited_urls_set.add(url)
+                requests_queued += 1
 
             if self.unvisited_urls_queue.empty() and self.fetched_urls_queue.empty():
                 color_logging("all fetched urls done")

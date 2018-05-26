@@ -1,4 +1,4 @@
-__version__ = '0.5.1'
+__version__ = '0.5.2'
 
 import sys
 import logging
@@ -36,6 +36,8 @@ def main():
         '--cookies', nargs='*', help="Specify cookies, e.g. 'lang=en country:us'")
     parser.add_argument(
         '--workers', help="Specify concurrent workers number.")
+    parser.add_argument(
+        '--rpm-limit', type=int, help="Specify requests limit per minute for crawler.")
 
     args = parser.parse_args()
 
@@ -72,5 +74,5 @@ def main_crawler(args):
         key, value = cookie.split(split_char)
         cookies[key] = value
 
-    web_crawler = RequestsCrawler(args.workers)
+    web_crawler = RequestsCrawler(args.workers, args.rpm_limit)
     web_crawler.start(args.seed, headers, cookies, include, exclude)
