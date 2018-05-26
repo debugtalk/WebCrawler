@@ -14,7 +14,7 @@ A web crawler based on [requests-html][requests-html], mainly targets for url va
 ## Installation/Upgrade
 
 ```bash
-$ pip install -U git+https://github.com/debugtalk/WebCrawler.git
+$ pip install requests-crawler
 ```
 
 Only **Python 3.6** is supported.
