@@ -36,13 +36,11 @@ def main():
         '--cookies', nargs='*', help="Specify cookies, e.g. 'lang=en country:us'")
     parser.add_argument(
         '--workers', help="Specify concurrent workers number.")
-    parser.add_argument(
-        "--grey-env", help="Specify grey environment headers and cookies.")
 
     args = parser.parse_args()
 
     if args.version:
-        print("WebCrawler version: {}".format(__version__))
+        print(f"{__version__}")
         exit(0)
 
     log_level = getattr(logging, args.log_level.upper())

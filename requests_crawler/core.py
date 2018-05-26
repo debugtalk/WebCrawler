@@ -67,11 +67,11 @@ class Worker(multiprocessing.Process):
             status_code = resp.status_code
             url_type = self.get_url_type(url, resp)
         except exceptions.ConnectTimeout as ex:
-            color_logging("{}: {}".format(url, str(ex)), 'WARNING')
+            color_logging(f"{url}: {str(ex)}", 'WARNING')
             status_code = "ConnectTimeout"
             url_type = None
         except exceptions.ConnectionError as ex:
-            color_logging("{}: {}".format(url, str(ex)), 'WARNING')
+            color_logging(f"{url}: {str(ex)}", 'WARNING')
             status_code = "ConnectionError"
             url_type = None
 
@@ -86,18 +86,18 @@ class Worker(multiprocessing.Process):
             resp = self.session.get(url, **self.kwargs)
             status_code = resp.status_code
         except exceptions.ConnectionError as ex:
-            color_logging("{}: {}".format(url, str(ex)), 'ERROR')
+            color_logging(f"{url}: {str(ex)}", 'ERROR')
             status_code = "ConnectionError"
 
         try:
             resp.html.render(timeout=30)
             hyper_links = resp.html.absolute_links
         except lxml.etree.ParserError as ex:
-            color_logging("{}: {}".format(url, str(ex)), 'ERROR')
+            color_logging(f"{url}: {str(ex)}", 'ERROR')
         except UnicodeDecodeError as ex:
-            color_logging("{}: {}".format(url, str(ex)), 'ERROR')
+            color_logging(f"{url}: {str(ex)}", 'ERROR')
         except MaxRetries as ex:
-            color_logging("{}: {}".format(url, str(ex)), 'ERROR')
+            color_logging(f"{url}: {str(ex)}", 'ERROR')
 
         return (status_code, hyper_links)
 
@@ -106,7 +106,7 @@ class Worker(multiprocessing.Process):
             unvisited_url = self.unvisited_urls_queue.get()
             if unvisited_url is None:
                 # Poison pill means shutdown
-                color_logging('{}: Exiting'.format(self.name))
+                color_logging(f'{self.name}: Exiting')
                 self.unvisited_urls_queue.task_done()
                 break
 
@@ -162,7 +162,7 @@ class RequestsCrawler(object):
         self.elapsed_time = None
 
         # Start workers
-        color_logging('Creating {} workers'.format(self.max_workers), "INFO")
+        color_logging(f'Creating {self.max_workers} workers', "INFO")
         workers = [
             Worker(self.unvisited_urls_queue, self.fetched_urls_queue, self.result_queue, self.counter, config)
             for i in range(self.max_workers)

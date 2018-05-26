@@ -1,2 +1,2 @@
-from webcrawler import main
+from requests_crawler import main
 main()
