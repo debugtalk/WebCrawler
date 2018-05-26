@@ -228,10 +228,12 @@ class RequestsCrawler(object):
 
         return aggregate_results
 
-    def print_results(self, aggregate_results, canceled=False):
+    def print_results(self, aggregate_results, canceled=False, config=None):
         status = "Canceled" if canceled else "Finished"
+        config = config or {}
         color_logging('=' * 50 + " aggregate results " + '=' * 50, color='yellow')
         color_logging(f"status: {status}")
+        color_logging(f"configuration: {config}")
         color_logging(f"total crawled: {self.counter.value}")
         color_logging(f"total elapsed: {self.elapsed_time}")
 
@@ -296,4 +298,4 @@ class RequestsCrawler(object):
             color_logging("Canceling...", color='red')
         finally:
             aggregate_results = self.aggregate_results()
-            self.print_results(aggregate_results, canceled)
+            self.print_results(aggregate_results, canceled, config)
