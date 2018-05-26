@@ -1,6 +1,6 @@
 # requests-crawler
 
-A simple web crawler, mainly targets for link validation test.
+A web crawler based on [requests-html][requests-html], mainly targets for url validation test.
 
 ## Features
 
@@ -23,7 +23,7 @@ To ensure the installation or upgrade is successful, you can execute command `re
 
 ```bash
 $ requests_crawler -V
-0.5.2
+0.5.3
 ```
 
 ## Usage
@@ -40,7 +40,7 @@ usage: requests_crawler [-h] [-V] [--log-level LOG_LEVEL]
                         [--exclude [EXCLUDE [EXCLUDE ...]]]
                         [--workers WORKERS]
 
-A web crawler for testing website links validation, based on requests-html.
+A web crawler based on requests-html, mainly targets for url validation test.
 
 optional arguments:
   -h, --help            show this help message and exit

@@ -1,8 +1,8 @@
-__version__ = '0.5.2'
 
 import sys
 import logging
 import argparse
+from .__about__ import __version__, __description__
 from .core import color_logging, RequestsCrawler
 
 # Sanity checking.
@@ -10,14 +10,13 @@ try:
     assert sys.version_info.major == 3
     assert sys.version_info.minor > 5
 except AssertionError:
-    raise RuntimeError('RequestsCrawler requires Python 3.6+!')
+    raise RuntimeError('requests-crawler requires Python 3.6+!')
 
 
 def main():
     """ parse command line options and run commands.
     """
-    parser = argparse.ArgumentParser(
-        description='A web crawler for testing website links validation, based on requests-html.')
+    parser = argparse.ArgumentParser(description=__description__)
 
     parser.add_argument(
         '-V', '--version', dest='version', action='store_true',
