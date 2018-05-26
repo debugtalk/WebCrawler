@@ -1,53 +1,43 @@
-__version__ = '0.3.3'
+__version__ = '0.5.0'
 
-import os
 import sys
 import logging
 import argparse
-from .core import WebCrawler
-from .helpers import color_logging
+from .core import color_logging, RequestsCrawler
 
 # Sanity checking.
 try:
     assert sys.version_info.major == 3
     assert sys.version_info.minor > 5
 except AssertionError:
-    raise RuntimeError('WebCrawler requires Python 3.6+!')
+    raise RuntimeError('RequestsCrawler requires Python 3.6+!')
 
 
 def main():
     """ parse command line options and run commands.
     """
     parser = argparse.ArgumentParser(
-        description='A web crawler for testing website links validation.')
+        description='A web crawler for testing website links validation, based on requests-html.')
 
     parser.add_argument(
         '-V', '--version', dest='version', action='store_true',
         help="show version")
     parser.add_argument(
-        '--log-level', default='INFO',
-        help="Specify logging level, default is INFO.")
+        '--log-level', default='INFO', help="Specify logging level, default is INFO.")
     parser.add_argument(
-        '--config-file', help="Specify config file path.")
+        '--seed', help="Specify crawl seed url")
     parser.add_argument(
-        '--seeds',
-        help="Specify crawl seed url(s), several urls can be specified with pipe; \
-              if auth needed, seeds can be specified like user1:pwd1@url1|user2:pwd2@url2")
+        '--include-hosts', nargs='*', help="Specify extra hosts to be crawled.")
     parser.add_argument(
-        '--include-hosts', help="Specify extra hosts to be crawled.")
+        '--exclude-hosts', nargs='*', help="Specify excluded hosts not to be crawled.")
     parser.add_argument(
-        '--cookies', help="Specify cookies, several cookies can be joined by '|'. \
-            e.g. 'lang:en,country:us|lang:zh,country:cn'")
+        '--headers', nargs='*', help="Specify headers, e.g. 'User-Agent:iOS/10.3'")
     parser.add_argument(
-        '--crawl-mode', default='BFS', help="Specify crawl mode, BFS or DFS.")
+        '--cookies', nargs='*', help="Specify cookies, e.g. 'lang=en country:us'")
     parser.add_argument(
-        '--max-depth', default=5, type=int, help="Specify max crawl depth.")
+        '--workers', help="Specify concurrent workers number.")
     parser.add_argument(
-        '--concurrency', help="Specify concurrent workers number.")
-    parser.add_argument("--grey-env", help="Specify grey environment headers and cookies.")
-
-    parser.add_argument(
-        '--save-results', default='NO', help="Specify if save results, default is NO.")
+        "--grey-env", help="Specify grey environment headers and cookies.")
 
     args = parser.parse_args()
 
@@ -63,41 +53,26 @@ def main():
 
 def main_crawler(args):
 
-    if not args.seeds:
-        color_logging("crawl seeds not specified!", "ERROR")
+    if not args.seed:
+        color_logging("crawl seed not specified!", "ERROR")
         exit(0)
 
-    include_hosts = args.include_hosts.split(',') if args.include_hosts else []
-    cookies_list = args.cookies.split('|') if args.cookies else ['']
-    logs_folder = os.path.join(os.getcwd(), "logs")
+    include_hosts = set(args.include_hosts or [])
+    exclude_hosts = set(args.exclude_hosts or [])
+    headers_list = args.headers or []
+    cookies_list = args.cookies or []
 
-    web_crawler = WebCrawler(args.seeds, include_hosts, logs_folder, args.config_file)
+    headers = {}
+    for header in headers_list:
+        split_char = "=" if "=" in header else ":"
+        key, value = header.split(split_char)
+        headers[key] = value
 
-    # set grey environment
-    if args.grey_env:
-        web_crawler.set_grey_env(args.grey_env)
+    cookies = {}
+    for cookie in cookies_list:
+        split_char = "=" if "=" in cookie else ":"
+        key, value = cookie.split(split_char)
+        cookies[key] = value
 
-    canceled = False
-    try:
-        for cookies_str in cookies_list:
-            cookies_str_list = cookies_str.split(',')
-            cookies = {}
-            for cookie_str in cookies_str_list:
-                if ':' not in cookie_str:
-                    continue
-                key, value = cookie_str.split(':')
-                cookies[key.strip()] = value.strip()
-
-            web_crawler.start(
-                cookies,
-                args.crawl_mode,
-                args.max_depth,
-                args.concurrency
-            )
-
-    except KeyboardInterrupt:
-        canceled = True
-        color_logging("Canceling...", color='red')
-    finally:
-        save_results = False if args.save_results.upper() == "NO" else True
-        web_crawler.print_result(canceled, save_results)
+    web_crawler = RequestsCrawler(args.workers)
+    web_crawler.start(args.seed, headers, cookies, include_hosts, exclude_hosts)

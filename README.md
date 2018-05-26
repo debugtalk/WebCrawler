@@ -5,13 +5,9 @@ A simple web crawler, mainly targets for link validation test.
 ## Features
 
 - based on [requests-html][requests-html], **full JavaScript support!**
-- running in BFS or DFS mode
-- specify concurrent running workers in BFS mode
-- crawl seeds can be set to more than one urls
-- support crawl with cookies
-- configure hyper links regex, including match type and ignore type
+- support crawl with headers and cookies
 - group visited urls by HTTP status code
-- flexible configuration in YAML
+- display url's referer and hyper links
 
 ## Installation/Upgrade
 
@@ -25,76 +21,50 @@ To ensure the installation or upgrade is successful, you can execute command `we
 
 ```bash
 $ webcrawler -V
-WebCrawler version: 0.3.0
+WebCrawler version: 0.5.0
 ```
 
 ## Usage
 
 ```text
 $ webcrawler -h
-usage: main.py [-h] [-V] [--log-level LOG_LEVEL] [--config-file CONFIG_FILE]
-               [--seeds SEEDS] [--include-hosts INCLUDE_HOSTS]
-               [--cookies COOKIES] [--crawl-mode CRAWL_MODE]
-               [--max-depth MAX_DEPTH] [--concurrency CONCURRENCY]
-               [--grey-env GREY_ENV] [--save-results SAVE_RESULTS]
+usage: main.py [-h] [-V] [--log-level LOG_LEVEL] [--seed SEED]
+               [--include-hosts [INCLUDE_HOSTS [INCLUDE_HOSTS ...]]]
+               [--exclude-hosts [EXCLUDE_HOSTS [EXCLUDE_HOSTS ...]]]
+               [--headers [HEADERS [HEADERS ...]]]
+               [--cookies [COOKIES [COOKIES ...]]] [--workers WORKERS]
 
-A web crawler for testing website links validation.
+A web crawler for testing website links validation, based on requests-html.
 
 optional arguments:
   -h, --help            show this help message and exit
   -V, --version         show version
   --log-level LOG_LEVEL
                         Specify logging level, default is INFO.
-  --config-file CONFIG_FILE
-                        Specify config file path.
-  --seeds SEEDS         Specify crawl seed url(s), several urls can be
-                        specified with pipe; if auth needed, seeds can be
-                        specified like user1:pwd1@url1|user2:pwd2@url2
-  --include-hosts INCLUDE_HOSTS
+  --seed SEED           Specify crawl seed url
+  --include-hosts [INCLUDE_HOSTS [INCLUDE_HOSTS ...]]
                         Specify extra hosts to be crawled.
-  --cookies COOKIES     Specify cookies, several cookies can be joined by '|'.
-                        e.g. 'lang:en,country:us|lang:zh,country:cn'
-  --crawl-mode CRAWL_MODE
-                        Specify crawl mode, BFS or DFS.
-  --max-depth MAX_DEPTH
-                        Specify max crawl depth.
-  --concurrency CONCURRENCY
-                        Specify concurrent workers number.
-  --grey-env GREY_ENV   Specify grey environment headers and cookies.
-  --save-results SAVE_RESULTS
-                        Specify if save results, default is NO.
+  --exclude-hosts [EXCLUDE_HOSTS [EXCLUDE_HOSTS ...]]
+                        Specify excluded hosts not to be crawled.
+  --headers [HEADERS [HEADERS ...]]
+                        Specify headers, e.g. 'User-Agent:iOS/10.3'
+  --cookies [COOKIES [COOKIES ...]]
+                        Specify cookies, e.g. 'lang=en country:us'
+  --workers WORKERS     Specify concurrent workers number.
 ```
 
 ## Examples
 
-Specify config file.
+Basic usage.
 
 ```bash
-$ webcrawler --seeds http://debugtalk.com --crawl-mode bfs --max-depth 5 --config-file path/to/config.yml
+$ webcrawler --seed http://debugtalk.com
 ```
 
-Crawl in BFS mode with 20 concurrent workers, and set maximum depth to 5.
-
-```bash
-$ webcrawler --seeds http://debugtalk.com --crawl-mode bfs --max-depth 5 --concurrency 20
-```
-
-Crawl in DFS mode, and set maximum depth to 10.
-
-```bash
-$ webcrawler --seeds http://debugtalk.com --crawl-mode dfs --max-depth 10
-```
-
-Crawl several websites in BFS mode with 20 concurrent workers, and set maximum depth to 10.
-
-```bash
-$ webcrawler --seeds http://debugtalk.com,http://blog.debugtalk.com --crawl-mode bfs --max-depth 10 --concurrency 20
-```
-
-Crawl with different cookies.
+Crawl with headers and cookies.
 
 ```text
-$ webcrawler --seeds http://debugtalk.com --crawl-mode BFS --max-depth 10 --concurrency 50 --cookies 'lang:en,country:us|lang:zh,country:cn'
+$ webcrawler --seeds http://debugtalk.com --headers User-Agent:iOS/10.3 --cookies lang:en country:us
 ```
 
 [requests-html]: https://github.com/kennethreitz/requests-html
