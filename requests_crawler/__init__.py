@@ -27,19 +27,19 @@ def main():
     parser.add_argument(
         '--seed', help="Specify crawl seed url")
     parser.add_argument(
-        '--include', nargs='*', help="Urls include the snippets will be crawled recursively.")
-    parser.add_argument(
-        '--exclude', nargs='*', help="Urls include the snippets will be skipped.")
-    parser.add_argument(
         '--headers', nargs='*', help="Specify headers, e.g. 'User-Agent:iOS/10.3'")
     parser.add_argument(
         '--cookies', nargs='*', help="Specify cookies, e.g. 'lang=en country:us'")
     parser.add_argument(
-        '--workers', help="Specify concurrent workers number.")
-    parser.add_argument(
         '--requests-limit', type=int, help="Specify requests limit for crawler, default rps.")
     parser.add_argument(
         '--interval-limit', type=int, default=1, help="Specify limit interval, default 1 second.")
+    parser.add_argument(
+        '--include', nargs='*', help="Urls include the snippets will be crawled recursively.")
+    parser.add_argument(
+        '--exclude', nargs='*', help="Urls include the snippets will be skipped.")
+    parser.add_argument(
+        '--workers', help="Specify concurrent workers number.")
 
     args = parser.parse_args()
 
