@@ -152,9 +152,10 @@ class Worker(multiprocessing.Process):
 
 class RequestsCrawler(object):
 
-    def __init__(self, max_workers=None, rpm_limit=None):
+    def __init__(self, max_workers=None, requests_limit=None, interval_limit=None):
         self.max_workers = max_workers or multiprocessing.cpu_count()
-        self.rpm_limit = rpm_limit or math.inf
+        self.requests_limit = requests_limit or math.inf
+        self.interval_limit = interval_limit or 1
         self.unvisited_urls_queue = multiprocessing.JoinableQueue()
         self.fetched_urls_queue = multiprocessing.Queue()
         self.result_queue = multiprocessing.Queue()
@@ -274,11 +275,11 @@ class RequestsCrawler(object):
                     continue
 
                 # limit rpm
-                if requests_queued >= self.rpm_limit:
+                if requests_queued >= self.requests_limit:
                     runtime_secs = time.time() - start_timer
-                    if runtime_secs < 60:
-                        sleep_secs = 60 - runtime_secs
-                        color_logging(f"exceed {self.rpm_limit} rpm limitation, sleep {sleep_secs} seconds.", "warning")
+                    if runtime_secs < self.interval_limit:
+                        sleep_secs = self.interval_limit - runtime_secs
+                        color_logging(f"exceed {self.requests_limit} per {self.interval_limit} seconds, sleep {sleep_secs} seconds.", "warning")
                         time.sleep(sleep_secs)
 
                     start_timer = time.time()

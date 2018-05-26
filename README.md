@@ -5,11 +5,11 @@ A simple web crawler, mainly targets for link validation test.
 ## Features
 
 - based on [requests-html][requests-html], **full JavaScript support!**
-- support rpm limitation
+- support requests frequency limitation, e.g. rps/rpm
 - support crawl with headers and cookies
 - include & exclude mechanism
 - group visited urls by HTTP status code
-- display url's referer and hyper links
+- display url's referers and hyper links
 
 ## Installation/Upgrade
 
@@ -37,7 +37,8 @@ usage: requests_crawler [-h] [-V] [--log-level LOG_LEVEL]
                         [--headers [HEADERS [HEADERS ...]]]
                         [--cookies [COOKIES [COOKIES ...]]]
                         [--workers WORKERS]
-                        [--rpm-limit RPM_LIMIT]
+                        [--requests-limit REQUESTS_LIMIT]
+                        [--interval-limit INTERVAL_LIMIT]
 
 A web crawler for testing website links validation, based on requests-html.
 
@@ -56,8 +57,10 @@ optional arguments:
   --cookies [COOKIES [COOKIES ...]]
                         Specify cookies, e.g. 'lang=en country:us'
   --workers WORKERS     Specify concurrent workers number.
-  --rpm-limit RPM_LIMIT
-                        Specify requests limit per minute for crawler.
+  --requests-limit REQUESTS_LIMIT
+                        Specify requests limit for crawler, default rps.
+  --interval-limit INTERVAL_LIMIT
+                        Specify limit interval, default 1 second.
 ```
 
 ## Examples
@@ -86,10 +89,16 @@ Skip excluded url snippets, e.g. urls include `httprunner` will be skipped.
 $ requests_crawler --seeds http://debugtalk.com --exclude httprunner
 ```
 
-Crawl with rpm limitation.
+Crawl with 30 rps limitation.
 
 ```text
-$ requests_crawler --seeds http://debugtalk.com --rpm-limit 30
+$ requests_crawler --seeds http://debugtalk.com --requests-limit 30
+```
+
+Crawl with 500 rpm limitation.
+
+```text
+$ requests_crawler --seeds http://debugtalk.com --requests-limit 500 --interval-limit 60
 ```
 
 <!-- ## Logs && Report -->

@@ -37,7 +37,9 @@ def main():
     parser.add_argument(
         '--workers', help="Specify concurrent workers number.")
     parser.add_argument(
-        '--rpm-limit', type=int, help="Specify requests limit per minute for crawler.")
+        '--requests-limit', type=int, help="Specify requests limit for crawler, default rps.")
+    parser.add_argument(
+        '--interval-limit', type=int, default=1, help="Specify limit interval, default 1 second.")
 
     args = parser.parse_args()
 
@@ -74,5 +76,5 @@ def main_crawler(args):
         key, value = cookie.split(split_char)
         cookies[key] = value
 
-    web_crawler = RequestsCrawler(args.workers, args.rpm_limit)
+    web_crawler = RequestsCrawler(args.workers, args.requests_limit, args.interval_limit)
     web_crawler.start(args.seed, headers, cookies, include, exclude)
