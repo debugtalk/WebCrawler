@@ -6,6 +6,7 @@ A simple web crawler, mainly targets for link validation test.
 
 - based on [requests-html][requests-html], **full JavaScript support!**
 - support crawl with headers and cookies
+- include & exclude mechanism
 - group visited urls by HTTP status code
 - display url's referer and hyper links
 
@@ -28,11 +29,13 @@ $ requests_crawler -V
 
 ```text
 $ requests_crawler -h
-usage: main-debug.py [-h] [-V] [--log-level LOG_LEVEL] [--seed SEED]
-                     [--include [INCLUDE [INCLUDE ...]]]
-                     [--exclude-hosts [EXCLUDE_HOSTS [EXCLUDE_HOSTS ...]]]
-                     [--headers [HEADERS [HEADERS ...]]]
-                     [--cookies [COOKIES [COOKIES ...]]] [--workers WORKERS]
+usage: requests_crawler [-h] [-V] [--log-level LOG_LEVEL]
+                        [--seed SEED]
+                        [--include [INCLUDE [INCLUDE ...]]]
+                        [--exclude [EXCLUDE [EXCLUDE ...]]]
+                        [--headers [HEADERS [HEADERS ...]]]
+                        [--cookies [COOKIES [COOKIES ...]]]
+                        [--workers WORKERS]
 
 A web crawler for testing website links validation, based on requests-html.
 
@@ -44,8 +47,8 @@ optional arguments:
   --seed SEED           Specify crawl seed url
   --include [INCLUDE [INCLUDE ...]]
                         Urls include the snippets will be crawled recursively.
-  --exclude-hosts [EXCLUDE_HOSTS [EXCLUDE_HOSTS ...]]
-                        Specify excluded hosts not to be crawled.
+  --exclude [EXCLUDE [EXCLUDE ...]]
+                        Urls include the snippets will be skipped.
   --headers [HEADERS [HEADERS ...]]
                         Specify headers, e.g. 'User-Agent:iOS/10.3'
   --cookies [COOKIES [COOKIES ...]]
@@ -73,6 +76,11 @@ Crawl with extra hosts, e.g. `httprunner.org` will also be crawled recursively.
 $ requests_crawler --seeds http://debugtalk.com --include httprunner.org
 ```
 
+Skip excluded url snippets, e.g. urls include `httprunner` will be skipped.
+
+```text
+$ requests_crawler --seeds http://debugtalk.com --exclude httprunner
+```
 
 <!-- ## Logs && Report -->
 

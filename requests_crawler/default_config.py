@@ -9,7 +9,4 @@ mobile_headers = {
 
 timeout = 20
 
-exclude_urls = [
-    "https://cdn.ampproject.org",
-    "https://link.dji.com/u/nprefill.js"
-]
+exclude_urls = []

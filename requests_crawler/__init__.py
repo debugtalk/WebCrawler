@@ -1,4 +1,4 @@
-__version__ = '0.5.0'
+__version__ = '0.5.1'
 
 import sys
 import logging
@@ -29,7 +29,7 @@ def main():
     parser.add_argument(
         '--include', nargs='*', help="Urls include the snippets will be crawled recursively.")
     parser.add_argument(
-        '--exclude-hosts', nargs='*', help="Specify excluded hosts not to be crawled.")
+        '--exclude', nargs='*', help="Urls include the snippets will be skipped.")
     parser.add_argument(
         '--headers', nargs='*', help="Specify headers, e.g. 'User-Agent:iOS/10.3'")
     parser.add_argument(
@@ -56,7 +56,7 @@ def main_crawler(args):
         exit(0)
 
     include = set(args.include or [])
-    exclude_hosts = set(args.exclude_hosts or [])
+    exclude = set(args.exclude or [])
     headers_list = args.headers or []
     cookies_list = args.cookies or []
 
@@ -73,4 +73,4 @@ def main_crawler(args):
         cookies[key] = value
 
     web_crawler = RequestsCrawler(args.workers)
-    web_crawler.start(args.seed, headers, cookies, include, exclude_hosts)
+    web_crawler.start(args.seed, headers, cookies, include, exclude)

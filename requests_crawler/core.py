@@ -62,6 +62,12 @@ class Worker(multiprocessing.Process):
         return "external"
 
     def check_url_info(self, url):
+        for exclude_snippet in self.config["exclude"]:
+            if exclude_snippet in url:
+                status_code = None
+                url_type = "exclude"
+                return (status_code, url_type)
+
         try:
             resp = self.session.head(url, **self.kwargs)
             status_code = resp.status_code
@@ -114,6 +120,10 @@ class Worker(multiprocessing.Process):
             status_code, url_type = self.check_url_info(unvisited_url)
 
             method = "HEAD"
+            if url_type in ["exclude"]:
+                color_logging(f"skip url: {unvisited_url}", color="blue")
+                self.unvisited_urls_queue.task_done()
+                continue
             if url_type in ['static', 'external']:
                 hyper_links = set()
             elif url_type in ['recursive']:
@@ -263,10 +273,10 @@ class RequestsCrawler(object):
         self.unvisited_urls_queue.join()
         self.elapsed_time = time.time() - start_time
 
-    def start(self, seed, headers=None, cookies=None, include=None, exclude_hosts=None):
+    def start(self, seed, headers=None, cookies=None, include=None, exclude=None):
         include = include or set()
         include.add(seed)
-        exclude_hosts = exclude_hosts or set()
+        exclude = exclude or set()
         kwargs = {
             'headers': headers or default_config.pc_headers,
             'cookies': cookies or {},
@@ -275,7 +285,7 @@ class RequestsCrawler(object):
         config = {
             "kwargs": kwargs,
             "include": include,
-            "exclude_hosts": exclude_hosts
+            "exclude": exclude
         }
 
         canceled = False
