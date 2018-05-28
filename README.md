@@ -74,31 +74,31 @@ $ requests_crawler --seed http://debugtalk.com
 Crawl with headers and cookies.
 
 ```text
-$ requests_crawler --seeds http://debugtalk.com --headers User-Agent:iOS/10.3 --cookies lang:en country:us
+$ requests_crawler --seed http://debugtalk.com --headers User-Agent:iOS/10.3 --cookies lang:en country:us
 ```
 
 Crawl with 30 rps limitation.
 
 ```text
-$ requests_crawler --seeds http://debugtalk.com --requests-limit 30
+$ requests_crawler --seed http://debugtalk.com --requests-limit 30
 ```
 
 Crawl with 500 rpm limitation.
 
 ```text
-$ requests_crawler --seeds http://debugtalk.com --requests-limit 500 --interval-limit 60
+$ requests_crawler --seed http://debugtalk.com --requests-limit 500 --interval-limit 60
 ```
 
 Crawl with extra hosts, e.g. `httprunner.org` will also be crawled recursively.
 
 ```text
-$ requests_crawler --seeds http://debugtalk.com --include httprunner.org
+$ requests_crawler --seed http://debugtalk.com --include httprunner.org
 ```
 
 Skip excluded url snippets, e.g. urls include `httprunner` will be skipped.
 
 ```text
-$ requests_crawler --seeds http://debugtalk.com --exclude httprunner
+$ requests_crawler --seed http://debugtalk.com --exclude httprunner
 ```
 
 <!-- ## Logs && Report -->
