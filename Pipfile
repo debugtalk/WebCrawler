@@ -4,8 +4,8 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-requests-html = "*"
 termcolor = "*"
+request-html = {git = "https://github.com/debugtalk/requests-html.git"}
 
 [dev-packages]
 twine = "*"
