@@ -99,7 +99,7 @@ class Worker(multiprocessing.Process):
             status_code = "ConnectionError"
 
         try:
-            resp.html.render(timeout=30)
+            resp.html.render(sleep=1, timeout=30)
             hyper_links = resp.html.absolute_links
         except lxml.etree.ParserError as ex:
             color_logging(f"{url}: {str(ex)}", 'ERROR')
