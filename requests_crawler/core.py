@@ -87,7 +87,7 @@ class Worker(multiprocessing.Process):
         return (status_code, url_type)
 
     def get_hyper_links(self, url):
-        # session.browser
+        self.session.browser
         status_code = None
         hyper_links = set()
 
