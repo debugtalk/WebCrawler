@@ -11,9 +11,9 @@ with open('README.md') as f:
     long_description = f.read()
 
 setup(
-    name='webcrawler',
+    name='requests-crawler',
     version=version,
-    description='A simple web crawler, mainly targets for link validation test.',
+    description='A simple web crawler, mainly targets for link validation test',
     long_description=long_description,
     author='Leo Lee',
     author_email='mail@debugtalk.com',

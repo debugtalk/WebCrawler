@@ -17,7 +17,7 @@ A simple web crawler, mainly targets for link validation test.
 ## Installation/Upgrade
 
 ```bash
-$ pip install -U git+https://github.com/debugtalk/WebCrawler.git#egg=WebCrawler --process-dependency-links
+$ pip install -U git+https://github.com/debugtalk/WebCrawler.git#egg=requests-crawler --process-dependency-links
 ```
 
 To ensure the installation or upgrade is successful, you can execute command `webcrawler -V` to see if you can get the correct version number.
